@@ -32,14 +32,24 @@ function love.load()
     texFondo = love.graphics.newImage("fondo.png")
 
     sonidoColision = love.audio.newSource("colision.ogg", "static")
+    sonidoFon = love.audio.newSource("samplfondo.ogg", "stream")
+
   
     jugador.cargar()
 
         
-    enemigo1 = Enemigo:Nuevo(90, 90, "ido.png", 16)
-    enemigo2 = Enemigo:Nuevo(80, 100, "edo.png", 4)
-    enemigo3 = Enemigo:Nuevo(130, 72, "ada.png", 8)
-end
+    --enemigo1 = Enemigo:Nuevo(90, 90, "ido.png", 16)
+    enemigo1 = Enemigo:Nuevo(30, 90, "ido-sheet.png")
+    enemigo5 = Enemigo:Nuevo(100,30,"ido-sheet.png")
+
+    enemigo1:ConfigurarAnimacion(2, 6)
+    enemigo5:ConfigurarAnimacion(2, 3)
+    
+
+    enemigo2 = Enemigo:Nuevo(80, 100, "edo.png")
+    enemigo3 = Enemigo:Nuevo(130, 72, "ada.png")
+    enemigo4 = Enemigo:Nuevo(100,100,"ada2.png")
+    end
 
 
 -- =================== INTERACCION ===================
@@ -55,10 +65,10 @@ function love.keypressed(key)
     if dx ~= 0 or dy ~= 0 then
         jugador.mover(dx, dy)
 
-        enemigo1:MoverTurno(jugador.posX, jugador.posY)
+        -- enemigo1:MoverTurno(jugador.posX, jugador.posY)
         enemigo2:MoverTurno(jugador.posX, jugador.posY)
         enemigo3:MoverTurno(jugador.posX, jugador.posY)
-
+        --enemigo5:MoverTurno(jugador.posX, jugador.posY)
         jugador.chequearDanio()
     end
 end
@@ -67,14 +77,20 @@ end
 -- =================== ACTUALIZACION ===================
 function love.update(dt)
     if not jugador.vivo then
-        return -- si ya murió, no actualizamos nada más
+        return -- si ya murió, no actualizo  más
     end
+    sonidoFon:setVolume(0.5)
+    love.audio.play(sonidoFon)-- sonido de Fondo
+
 
     jugador.actualizar(dt)
 
     enemigo1:ActualizarEmpuje(dt)
+    enemigo1:ActualizarAnimacion(dt) --
     enemigo2:ActualizarEmpuje(dt)
     enemigo3:ActualizarEmpuje(dt)
+    enemigo5:ActualizarEmpuje(dt)
+    enemigo5:ActualizarAnimacion(dt)
 
     if enemigo1.vivo and enPozo(enemigo1.posX, enemigo1.posY) then
         enemigo1.vivo = false
@@ -95,12 +111,6 @@ function love.update(dt)
         jugador.vivo = false
     end
 
-
-
-    enColision = false
-
-    enColision = chequearColision(jugador.hBoxX, jugador.hBoxY, jugador.ancho, jugador.alto,
-                                   enemigo1.hBoxX, enemigo1.hBoxY, enemigo1.ancho, enemigo1.alto)
 end
        
 
@@ -110,7 +120,7 @@ function love.draw()
     love.graphics.setCanvas(lienzo)
 
         love.graphics.clear()
-         
+        
         love.graphics.draw(texFondo, 0, 0,0,1,1,0,0)
 
         jugador.dibujar()
@@ -121,18 +131,16 @@ function love.draw()
         --enemigo2:Debug()
         enemigo3:Dibujar()
         --enemigo3:Debug()
+        enemigo4:Dibujar()
+        enemigo5:Dibujar()
 
--- chequeeo debug de colisiones
-    if enColision then
-        love.graphics.setColor(0.5, 0.9, 0.3)
-        love.graphics.circle("fill",30,30,5)
-        love.graphics.setColor(1,1, 1)
-    end
+
 --una pantalla de GAME OVER provisoria
     if not jugador.vivo then
     love.graphics.setColor(1, 0, 0)
     love.graphics.printf("GAME OVER", 0, ventana.alto/2 - 10, ventana.ancho, "center")
     love.graphics.setColor(1, 1, 1)
+    sonidoFon:stop()
     end
 -- y una de VICTORIA provisoria
     if hasGanao then
@@ -150,11 +158,6 @@ function love.draw()
     
     love.graphics.draw(lienzo,0,0,0,ventana.escala,ventana.escala)
 
-    love.graphics.print("Pos Jugador X"..jugador.posX, 10, 10)
-    love.graphics.print("Y "..jugador.posY,15,20)
-
     love.graphics.print("  FPS ".. love.timer.getFPS(),360,10)
-
-    
     
 end

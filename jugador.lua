@@ -72,8 +72,13 @@ function jugador.actualizar(dt)
                          enemigo3.hBoxX, enemigo3.hBoxY, enemigo3.ancho, enemigo3.alto) then
         enemigo3:Empujar(jugador.dirX, jugador.dirY)
     end
+    if chequearColision(jugador.hBoxX, jugador.hBoxY, jugador.ancho, jugador.alto,
+                         enemigo5.hBoxX, enemigo5.hBoxY, enemigo5.ancho, enemigo5.alto) then
+        enemigo5:Empujar(jugador.dirX, jugador.dirY)
+    end    
         
-        jugador.dashTiempo = jugador.dashTiempo + dt
+    
+    jugador.dashTiempo = jugador.dashTiempo + dt
         if jugador.dashTiempo >= jugador.dashDuracion then
             jugador.dasheando = false
             jugador.dashTiempo = 0
@@ -83,6 +88,8 @@ function jugador.actualizar(dt)
             enemigo1:MoverTurno(jugador.posX, jugador.posY)
             enemigo2:MoverTurno(jugador.posX, jugador.posY)
             enemigo3:MoverTurno(jugador.posX, jugador.posY)
+
+            enemigo5:MoverTurno(jugador.posX, jugador.posY)
 
             jugador.chequearDanio()
         end
@@ -107,6 +114,7 @@ function jugador.mover(dx, dy)
     jugador.hBoxX = jugador.posX - jugador.origX
     jugador.hBoxY = jugador.posY - jugador.origY
 end
+
 -- Chequear DAÑO
 function jugador.chequearDanio()
     if jugador.dasheando then
@@ -125,6 +133,10 @@ function jugador.chequearDanio()
     end
     if enemigo3.vivo and chequearColision(jugador.hBoxX, jugador.hBoxY, jugador.ancho, jugador.alto,
                                            enemigo3.hBoxX, enemigo3.hBoxY, enemigo3.ancho, enemigo3.alto) then
+        golpeado = true
+    end
+    if enemigo3.vivo and chequearColision(jugador.hBoxX, jugador.hBoxY, jugador.ancho, jugador.alto,
+                                           enemigo5.hBoxX, enemigo5.hBoxY, enemigo5.ancho, enemigo5.alto) then
         golpeado = true
     end
 
@@ -150,6 +162,7 @@ if jugador.enCooldown then
     love.graphics.setColor(1, 1, 1) -- resetear color siempre después
 end
 
+-- Funcion de Chequear Colision
 function chequearColision (x1,y1,ancho1,alto1,x2,y2,ancho2,alto2)
     return x1 < x2 + ancho2 and
             x2 < x1 + ancho1 and

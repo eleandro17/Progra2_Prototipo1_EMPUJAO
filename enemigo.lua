@@ -1,7 +1,7 @@
 Enemigo = {}
 Enemigo.__index = Enemigo
 -- =================== INICIALIZACION ===================
-function Enemigo:Nuevo(x, y, img, v )
+function Enemigo:Nuevo(x, y, img )
     local o = setmetatable({}, Enemigo)
 
     o.posX = x
@@ -13,7 +13,7 @@ function Enemigo:Nuevo(x, y, img, v )
     o.origY = o.alto / 2
     o.hBoxX = 0
     o.hBoxY = 0
-    o.vel = v
+   -- o.vel = v YA NO LO uso
 
     o.paso= 8
 
@@ -27,6 +27,12 @@ function Enemigo:Nuevo(x, y, img, v )
     o.empujeTiempo = 0
     o.dirX = 0
     o.dirY = 0
+
+     -- SALTO (solo animaciòn)
+    o.saltoTiempo = 0
+    o.saltoAltura = 6      -- qué tan alto "salta" en píxeles
+    o.saltoVelocidad = 6   -- qué tan rápido salta
+    o.saltoOffset = 0
 
     return o
 end
@@ -52,37 +58,7 @@ function Enemigo:MoverTurno(jugadorX, jugadorY)
     self.hBoxY = self.posY - self.origY
 end
 -- =================== ACTUALIZAR ===================
-function Enemigo:Actualizar(x, y, a, dt)
-
-    if not self.vivo then return end
-
-    -- Persecución
-    local dist_x = math.abs(self.posX - x)
-    local dist_y = math.abs(self.posY - y)
-
-    if dist_x > dist_y then
-        if dist_x > a then
-            if self.posX < x then
-                self.posX = self.posX + (self.vel * dt)
-            elseif self.posX > x then
-                self.posX = self.posX - (self.vel * dt)
-            end
-        end
-    else
-        if dist_y > a then
-            if self.posY < y then
-                self.posY = self.posY + (self.vel * dt)
-            elseif self.posY > y then
-                self.posY = self.posY - (self.vel * dt)
-            end
-        end
-    end
-
-    self.hBoxX = self.posX - self.origX
-    self.hBoxY = self.posY - self.origY
-end
-
--- ========= EMPUJE (del dash) =====
+-- ========= EMPUJE (mas bien ser EMPUJAO) =====
 function Enemigo:Empujar(dx, dy)
     if not self.empujado then
         self.empujado = true
@@ -110,12 +86,20 @@ function Enemigo:ActualizarEmpuje(dt)
         end
     end
 end
+
+
+
+
 -- =================== RENDERIZADO ===================
 function Enemigo:Dibujar()
-
     if not self.vivo then return end
 
-    love.graphics.draw(self.tex, redondear(self.posX), redondear(self.posY), 0, 1, 1, self.origX, self.origY)
+    if self.animCuadros then
+        love.graphics.draw(self.tex, self.animCuadros[self.animActual],
+            redondear(self.posX), redondear(self.posY), 0, 1, 1, self.origX, self.origY)
+    else
+        love.graphics.draw(self.tex, redondear(self.posX), redondear(self.posY), 0, 1, 1, self.origX, self.origY)
+    end
 end
 
 -- =================== DEPURAR ===================
@@ -125,8 +109,53 @@ function Enemigo:Debug()
 
     love.graphics.rectangle("line", redondear(self.hBoxX), redondear(self.hBoxY), self.ancho, self.alto)
     love.graphics.circle("fill", redondear(self.posX), redondear(self.posY), 1)
+
+    love.graphics.print("Pos Jugador X"..jugador.posX, 10, 10)
+    love.graphics.print("Y "..jugador.posY,15,20)
+
+    love.graphics.print("Ancho tex: "..enemigo1.tex:getWidth().." Alto tex: "..enemigo1.tex:getHeight(), 10, 40)
+    love.graphics.print("AnchoFrame: "..(enemigo1.tex:getWidth()/2), 10, 50)
+    love.graphics.print("Frame actual: "..(enemigo1.animActual or "nil"), 10, 60)
 end
 
 function redondear(n)
     return math.floor(n + 0.5)
+end
+
+-- ANIMACION (se la asigno por instancia, no a todos) ========
+function Enemigo:ConfigurarAnimacion(frames, velocidadAnim)
+    self.animFrames = frames              -- cantidad de frames 
+    self.animVelocidad = velocidadAnim or 6 -- frames por s
+    self.animTiempo = 0
+    self.animActual = 1
+
+    local anchoFrame = self.tex:getWidth() / frames
+    local altoFrame  = self.tex:getHeight()
+
+    self.animCuadros = {}
+    for i = 0, frames - 1 do
+        self.animCuadros[i + 1] = love.graphics.newQuad(
+            i * anchoFrame, 0, anchoFrame, altoFrame,
+            self.tex:getDimensions()
+        )
+    end
+
+    -- calculo de los origX/origY . (es el de 1 frame)
+    self.origX = anchoFrame / 2
+    self.origY = altoFrame / 2
+    self.ancho = anchoFrame
+    self.alto  = altoFrame
+end
+
+function Enemigo:ActualizarAnimacion(dt)
+    if not self.vivo or not self.animCuadros then return end
+
+    self.animTiempo = self.animTiempo + dt
+    if self.animTiempo >= 1 / self.animVelocidad then
+        self.animTiempo = 0
+        self.animActual = self.animActual + 1
+        if self.animActual > self.animFrames then
+            self.animActual = 1
+        end
+    end
 end
