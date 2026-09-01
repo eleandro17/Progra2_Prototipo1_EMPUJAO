@@ -6,6 +6,12 @@ Prototipo desarrollado para la materia **Programación de Videojuegos 2** (Tecni
 
 Juego de exploración/persecución en una grilla (8x8 por casillero), con movimiento por turnos y un sistema de dash. El jugador debe evadir o escaparse de las entidades, su defensa/ataque es un dash-empujòn que los saca afuera del àrea.
 
+## Controles
+Tecla	Acción
+Flechas (↑ ↓ ← →)	Mover al jugador (un paso por turno)
+D	Dash (movimiento rápido, invulnerable, empuja enemigos)
+R	Reiniciar la partida (en cualquier momento)
+
 ## Estructura del proyecto
 
 ```
@@ -39,11 +45,12 @@ hud.lua       -- interfaz de mensajes: pantallas de Game Over / Victoria, FPS
 
 ## Estado del commit actual
 
-Se agrega: sistema de reinicio con tecla R (reciclado de instancias, sin recrear enemigos/jugador)
+Conversión de jugador (singleton) a clase Jugador con metatablas, constructor Nuevo, y todos los métodos con la sintaxis :
+Contador de vidas visual ( muy clàsicos corazones) en el HUD: hud.dibujarVidas()
 
 ### Pendiente / próximos pasos
 - Optimizar la creación de fuentes en el HUD (se recrean en cada draw de la pantalla de victoria).
-- Convertir personaje (de singleton) a clase
+
 
 ## Cómo correrlo
 

@@ -30,6 +30,14 @@ function hud.dibujarVidas(vidas)
     end
 end
 
+function hud.dibujarControles(ventana)
+    love.graphics.setFont(love.graphics.newFont(7))
+    love.graphics.setColor(1, 1, 1, 0.8)
+    love.graphics.printf("Flechas: mover | D: dash | R: reiniciar", 0, ventana.alto - 8, ventana.ancho, "center")
+    love.graphics.setColor(1, 1, 1)
+end
+
+
 function hud.dibujarReinicio(ventana)
     love.graphics.setFont(love.graphics.newFont(8))
     love.graphics.setColor(1, 1, 1)

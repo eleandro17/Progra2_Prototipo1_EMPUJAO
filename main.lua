@@ -151,6 +151,11 @@ function love.draw()
         
 
         hud.dibujarVidas(jugador.vidas)
+
+                if jugador.vivo and not hasGanao then
+            hud.dibujarControles(ventana)
+        end
+
         hud.dibujarMensajes(jugador, hasGanao, ventana, sonidoFon)
 
     love.graphics.setCanvas()
