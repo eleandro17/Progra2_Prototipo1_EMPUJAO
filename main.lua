@@ -26,7 +26,7 @@ end
 
 -- =================== REINICIO ===================
 function reiniciarJuego()
-    jugador.reiniciar()
+    jugador:Reiniciar()
 
     for _, e in ipairs(enemigos) do
         e:Reiniciar()
@@ -47,7 +47,8 @@ function love.load()
     sonidoFon = love.audio.newSource("samplfondo.ogg", "stream")
 
   
-    jugador.cargar()
+    jugador = Jugador:Nuevo(20, 20)
+    jugador:Cargar()
     hud.cargar()
 
         
@@ -88,13 +89,13 @@ function love.keypressed(key)
     end
 
     if dx ~= 0 or dy ~= 0 then
-        jugador.mover(dx, dy)
+        jugador:Mover(dx, dy)
 
         -- enemigo1:MoverTurno(jugador.posX, jugador.posY)
         enemigo2:MoverTurno(jugador.posX, jugador.posY)
         enemigo3:MoverTurno(jugador.posX, jugador.posY)
         --enemigo5:MoverTurno(jugador.posX, jugador.posY)
-        jugador.chequearDanio(enemigosInteractivos)
+        jugador:ChequearDanio(enemigosInteractivos)
     end
 end
 
@@ -108,7 +109,7 @@ function love.update(dt)
     love.audio.play(sonidoFon)-- sonido de Fondo
 
 
-    jugador.actualizar(dt)
+    jugador:Actualizar(dt, enemigosInteractivos)
 
     for _, e in ipairs(enemigos) do
         e:ActualizarEmpuje(dt)
@@ -140,13 +141,16 @@ function love.draw()
         
         love.graphics.draw(texFondo, 0, 0,0,1,1,0,0)
 
-        jugador.dibujar()
+        jugador:Dibujar()
+        --jugador:Debug()
 
         for _, e in ipairs(enemigos) do
             e:Dibujar()
+            --e:Debug()
         end
+        
 
-
+        hud.dibujarVidas(jugador.vidas)
         hud.dibujarMensajes(jugador, hasGanao, ventana, sonidoFon)
 
     love.graphics.setCanvas()

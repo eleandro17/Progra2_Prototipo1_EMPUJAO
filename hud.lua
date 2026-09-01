@@ -4,6 +4,7 @@ hud = {}
 function hud.cargar()
     hud.imgGameOver = love.graphics.newImage("gameover.png")
     hud.imgVictoria = love.graphics.newImage("victoria.png")
+    hud.imgVida = love.graphics.newImage("vida.png")
 end
 
 -- Va adentro del canvas 
@@ -16,6 +17,16 @@ function hud.dibujarMensajes(jugador, hasGanao, ventana, sonidoFon)
     if hasGanao then
         hud.dibujarVictoria(ventana)
         hud.dibujarReinicio(ventana)
+    end
+end
+
+function hud.dibujarVidas(vidas)
+    local margen = 4
+    local espaciado = hud.imgVida:getWidth() + 2
+
+    for i = 1, vidas do
+        local x = margen + (i - 1) * espaciado
+        love.graphics.draw(hud.imgVida, x, margen)
     end
 end
 

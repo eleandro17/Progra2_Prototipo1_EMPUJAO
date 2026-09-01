@@ -4,7 +4,7 @@ Prototipo desarrollado para la materia **Programación de Videojuegos 2** (Tecni
 
 ## Descripción
 
-Juego de exploración/persecución en una grilla, con movimiento por turnos y un sistema de dash. El jugador debe evadir o esquivar enemigos con distintos comportamientos hasta eliminarlos o sobrevivir.
+Juego de exploración/persecución en una grilla (8x8 por casillero), con movimiento por turnos y un sistema de dash. El jugador debe evadir o escaparse de las entidades, su defensa/ataque es un dash-empujòn que los saca afuera del àrea.
 
 ## Estructura del proyecto
 
