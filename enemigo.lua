@@ -37,7 +37,7 @@ function Enemigo:Nuevo(x, y, img )
     return o
 end
 
--- =================== MOVER POR TURNO ===================
+-- MOVER POR TURNO 
 function Enemigo:MoverTurno(jugadorX, jugadorY)
     if not self.vivo then return end
     local dx, dy = 0, 0
@@ -58,7 +58,8 @@ function Enemigo:MoverTurno(jugadorX, jugadorY)
     self.hBoxY = self.posY - self.origY
 end
 -- =================== ACTUALIZAR ===================
--- ========= EMPUJE (mas bien ser EMPUJAO) =====
+
+-- EMPUJE (mas bien ser EMPUJAO)
 function Enemigo:Empujar(dx, dy)
     if not self.empujado then
         self.empujado = true
@@ -102,20 +103,16 @@ function Enemigo:Dibujar()
     end
 end
 
+
 -- =================== DEPURAR ===================
 function Enemigo:Debug()
-
     if not self.vivo then return end
 
     love.graphics.rectangle("line", redondear(self.hBoxX), redondear(self.hBoxY), self.ancho, self.alto)
     love.graphics.circle("fill", redondear(self.posX), redondear(self.posY), 1)
 
-    love.graphics.print("Pos Jugador X"..jugador.posX, 10, 10)
-    love.graphics.print("Y "..jugador.posY,15,20)
-
-    love.graphics.print("Ancho tex: "..enemigo1.tex:getWidth().." Alto tex: "..enemigo1.tex:getHeight(), 10, 40)
-    love.graphics.print("AnchoFrame: "..(enemigo1.tex:getWidth()/2), 10, 50)
-    love.graphics.print("Frame actual: "..(enemigo1.animActual or "nil"), 10, 60)
+    love.graphics.print("Ancho: "..self.ancho.." Alto: "..self.alto, redondear(self.posX), redondear(self.posY) - 20)
+    love.graphics.print("Frame: "..(self.animActual or "sin animar"), redondear(self.posX), redondear(self.posY) - 10)
 end
 
 function redondear(n)

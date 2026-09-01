@@ -33,7 +33,7 @@ jugador= {
 -- =================== INICIALIZACION = ==================
 function jugador.cargar()
     jugador.tex = love.graphics.newImage("jugador.png")
-    jugador.tex2 = love.graphics.newImage("uda.png")
+    jugador.tex2 = love.graphics.newImage("uda2.png")
 end
 
 --ACTUALIZACION
@@ -135,7 +135,7 @@ function jugador.chequearDanio()
                                            enemigo3.hBoxX, enemigo3.hBoxY, enemigo3.ancho, enemigo3.alto) then
         golpeado = true
     end
-    if enemigo3.vivo and chequearColision(jugador.hBoxX, jugador.hBoxY, jugador.ancho, jugador.alto,
+    if enemigo5.vivo and chequearColision(jugador.hBoxX, jugador.hBoxY, jugador.ancho, jugador.alto,
                                            enemigo5.hBoxX, enemigo5.hBoxY, enemigo5.ancho, enemigo5.alto) then
         golpeado = true
     end
@@ -152,8 +152,8 @@ end
 -- =================== RENDERIZADO ===================
 function jugador.dibujar()
 if jugador.dasheando then
-    love.graphics.setColor(1,0,0,0.7)
-    love.graphics.draw(jugador.tex2, jugador.posX, jugador.posY, 0, 0.5, 0.5, jugador.origX, jugador.origY)
+    love.graphics.setColor(1,1,1,0.85)
+    love.graphics.draw(jugador.tex2, jugador.posX, jugador.posY, 0, 1.5, 1.5, jugador.origX, jugador.origY)
 end    
 if jugador.enCooldown then
         love.graphics.setColor(1, 0.5, 0.5,0.3) 
@@ -168,4 +168,15 @@ function chequearColision (x1,y1,ancho1,alto1,x2,y2,ancho2,alto2)
             x2 < x1 + ancho1 and
             y1 < y2 + alto2 and
             y2 < y1 + alto1
+end
+
+-- =================== DEPURAR ===================
+function jugador:Debug()
+    love.graphics.setColor(0.13,0,0.20)
+    love.graphics.setFont(love.graphics.newFont(4))
+    love.graphics.rectangle("line", redondear(self.hBoxX), redondear(self.hBoxY), self.ancho, self.alto)
+    love.graphics.print("Pos Jugador X"..self.posX, 10, 10)
+    love.graphics.print("Y "..self.posY, 15, 20)
+    love.graphics.print("Vidas: "..self.vidas, 10, 30)
+    love.graphics.setColor(1,1,1)
 end

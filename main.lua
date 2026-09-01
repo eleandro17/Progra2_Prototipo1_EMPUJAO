@@ -1,5 +1,6 @@
 require "jugador"
 require "enemigo"
+require "hud"
 -- =================== DECLARACION ===================
 
 ventana = {
@@ -36,6 +37,7 @@ function love.load()
 
   
     jugador.cargar()
+    hud.cargar()
 
         
     --enemigo1 = Enemigo:Nuevo(90, 90, "ido.png", 16)
@@ -46,7 +48,9 @@ function love.load()
     enemigo5:ConfigurarAnimacion(2, 3)
     
 
-    enemigo2 = Enemigo:Nuevo(80, 100, "edo.png")
+    --enemigo2 = Enemigo:Nuevo(80, 100, "edo.png")
+    enemigo2 = Enemigo:Nuevo(80, 100, "edo-sheet.png")
+    enemigo2:ConfigurarAnimacion(2, 4)
     enemigo3 = Enemigo:Nuevo(130, 72, "ada.png")
     enemigo4 = Enemigo:Nuevo(100,100,"ada2.png")
     end
@@ -88,6 +92,7 @@ function love.update(dt)
     enemigo1:ActualizarEmpuje(dt)
     enemigo1:ActualizarAnimacion(dt) --
     enemigo2:ActualizarEmpuje(dt)
+    enemigo2:ActualizarAnimacion(dt)--
     enemigo3:ActualizarEmpuje(dt)
     enemigo5:ActualizarEmpuje(dt)
     enemigo5:ActualizarAnimacion(dt)
@@ -124,6 +129,8 @@ function love.draw()
         love.graphics.draw(texFondo, 0, 0,0,1,1,0,0)
 
         jugador.dibujar()
+        jugador:Debug()
+
                         
         enemigo1:Dibujar()
         --enemigo1:Debug()
@@ -131,33 +138,19 @@ function love.draw()
         --enemigo2:Debug()
         enemigo3:Dibujar()
         --enemigo3:Debug()
-        enemigo4:Dibujar()
+        enemigo4:Dibujar()-- este solo se dibuja, es mas bien un NPC
         enemigo5:Dibujar()
+        --enemigo5:Debug()
+
+        hud.dibujar(jugador, hasGanao, ventana, sonidoFon)
 
 
---una pantalla de GAME OVER provisoria
-    if not jugador.vivo then
-    love.graphics.setColor(1, 0, 0)
-    love.graphics.printf("GAME OVER", 0, ventana.alto/2 - 10, ventana.ancho, "center")
-    love.graphics.setColor(1, 1, 1)
-    sonidoFon:stop()
-    end
--- y una de VICTORIA provisoria
-    if hasGanao then
-        love.graphics.setColor(0.3, 0.3, 0.3)
-        love.graphics.printf(" Has Ganao ", 0, ventana.alto/2 - 10, ventana.ancho, "center")
-        
-        love.graphics.setFont(love.graphics.newFont(10))
-        love.graphics.printf(" Pero quedaste solito ", 0, ventana.alto/2 + 30, ventana.ancho, "center")
-        love.graphics.setFont(love.graphics.newFont(20))
-        love.graphics.setColor(1, 1, 1)
-    end
-        
+
     
     love.graphics.setCanvas()
     
     love.graphics.draw(lienzo,0,0,0,ventana.escala,ventana.escala)
 
-    love.graphics.print("  FPS ".. love.timer.getFPS(),360,10)
+    
     
 end
