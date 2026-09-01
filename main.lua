@@ -24,6 +24,17 @@ function enPozo(x, y)
     return x < limites.minX or x > limites.maxX or y < limites.minY or y > limites.maxY
 end
 
+-- =================== REINICIO ===================
+function reiniciarJuego()
+    jugador.reiniciar()
+
+    for _, e in ipairs(enemigos) do
+        e:Reiniciar()
+    end
+
+    hasGanao = false
+end
+
 -- =================== INICIALIZACION ===================
 function love.load()
     love.window.setMode(ventana.ancho* ventana.escala, ventana.alto *ventana.escala)
@@ -53,11 +64,21 @@ function love.load()
     enemigo2:ConfigurarAnimacion(2, 4)
     enemigo3 = Enemigo:Nuevo(130, 72, "ada.png")
     enemigo4 = Enemigo:Nuevo(100,100,"ada2.png")
+
+    -- Todos los enemigos: para dibujar, animar, empujar y chequear pozo
+    enemigos = { enemigo1, enemigo2, enemigo3, enemigo4, enemigo5 }
+    -- Enemigos que interactúan con el jugador (todos menos el NPC decorativo enemigo4)
+    enemigosInteractivos = { enemigo1, enemigo2, enemigo3, enemigo5 }
     end
 
 
 -- =================== INTERACCION ===================
 function love.keypressed(key)
+    if key == "r" then
+        reiniciarJuego()
+        return
+    end
+
     local dx, dy = 0, 0
 
     if key == "left" then dx = -1
@@ -73,7 +94,7 @@ function love.keypressed(key)
         enemigo2:MoverTurno(jugador.posX, jugador.posY)
         enemigo3:MoverTurno(jugador.posX, jugador.posY)
         --enemigo5:MoverTurno(jugador.posX, jugador.posY)
-        jugador.chequearDanio()
+        jugador.chequearDanio(enemigosInteractivos)
     end
 end
 
@@ -89,31 +110,22 @@ function love.update(dt)
 
     jugador.actualizar(dt)
 
-    enemigo1:ActualizarEmpuje(dt)
-    enemigo1:ActualizarAnimacion(dt) --
-    enemigo2:ActualizarEmpuje(dt)
-    enemigo2:ActualizarAnimacion(dt)--
-    enemigo3:ActualizarEmpuje(dt)
-    enemigo5:ActualizarEmpuje(dt)
-    enemigo5:ActualizarAnimacion(dt)
+    for _, e in ipairs(enemigos) do
+        e:ActualizarEmpuje(dt)
+        e:ActualizarAnimacion(dt) -- no hace nada si el enemigo no tiene animación configurada
 
-    if enemigo1.vivo and enPozo(enemigo1.posX, enemigo1.posY) then
-        enemigo1.vivo = false
-    end
-    if enemigo2.vivo and enPozo(enemigo2.posX, enemigo2.posY) then
-        enemigo2.vivo = false
-    end
-    if enemigo3.vivo and enPozo(enemigo3.posX, enemigo3.posY) then
-        enemigo3.vivo = false
-    end
-
-    if not enemigo1.vivo and not enemigo2.vivo and not enemigo3.vivo then
-    hasGanao = true
+        if e.vivo and enPozo(e.posX, e.posY) then
+            e.vivo = false
+        end
     end
 
     
     if enPozo(jugador.posX, jugador.posY) then
         jugador.vivo = false
+    end
+
+    if jugador.vivo and not enemigo1.vivo and not enemigo2.vivo and not enemigo3.vivo and not enemigo5.vivo then
+        hasGanao = true
     end
 
 end
@@ -129,28 +141,18 @@ function love.draw()
         love.graphics.draw(texFondo, 0, 0,0,1,1,0,0)
 
         jugador.dibujar()
-        jugador:Debug()
 
-                        
-        enemigo1:Dibujar()
-        --enemigo1:Debug()
-        enemigo2:Dibujar()
-        --enemigo2:Debug()
-        enemigo3:Dibujar()
-        --enemigo3:Debug()
-        enemigo4:Dibujar()-- este solo se dibuja, es mas bien un NPC
-        enemigo5:Dibujar()
-        --enemigo5:Debug()
-
-        hud.dibujar(jugador, hasGanao, ventana, sonidoFon)
+        for _, e in ipairs(enemigos) do
+            e:Dibujar()
+        end
 
 
+        hud.dibujarMensajes(jugador, hasGanao, ventana, sonidoFon)
 
-    
     love.graphics.setCanvas()
     
     love.graphics.draw(lienzo,0,0,0,ventana.escala,ventana.escala)
 
-    
+    hud.dibujarFPS()
     
 end

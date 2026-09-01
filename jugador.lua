@@ -6,6 +6,8 @@ jugador= {
     tex2 = nil,
     posX= 20,
     posY= 20,
+    spawnX = 20,
+    spawnY = 20,
     vel= 25,
     alto=8,
     ancho=8,
@@ -36,6 +38,25 @@ function jugador.cargar()
     jugador.tex2 = love.graphics.newImage("uda2.png")
 end
 
+-- =================== REINICIAR ===================
+function jugador.reiniciar()
+    jugador.posX = jugador.spawnX
+    jugador.posY = jugador.spawnY
+    jugador.dirX = 0
+    jugador.dirY = -1
+
+    jugador.hBoxX = jugador.posX - jugador.origX
+    jugador.hBoxY = jugador.posY - jugador.origY
+
+    jugador.dasheando = false
+    jugador.dashTiempo = 0
+    jugador.enCooldown = false
+    jugador.cooldownTiempo = 0
+
+    jugador.vivo = true
+    jugador.vidas = 3
+end
+
 --ACTUALIZACION
 
 function jugador.actualizar(dt)
@@ -59,24 +80,13 @@ function jugador.actualizar(dt)
         jugador.hBoxX = jugador.posX - jugador.origX
         jugador.hBoxY = jugador.posY - jugador.origY
 
-    -- chequeo de choque contra cada enemigo mientras dasheo
-    if chequearColision(jugador.hBoxX, jugador.hBoxY, jugador.ancho, jugador.alto,
-                         enemigo1.hBoxX, enemigo1.hBoxY, enemigo1.ancho, enemigo1.alto) then
-        enemigo1:Empujar(jugador.dirX, jugador.dirY)
+    -- chequeo de choque contra cada enemigo interactivo mientras dasheo
+    for _, e in ipairs(enemigosInteractivos) do
+        if chequearColision(jugador.hBoxX, jugador.hBoxY, jugador.ancho, jugador.alto,
+                             e.hBoxX, e.hBoxY, e.ancho, e.alto) then
+            e:Empujar(jugador.dirX, jugador.dirY)
+        end
     end
-    if chequearColision(jugador.hBoxX, jugador.hBoxY, jugador.ancho, jugador.alto,
-                         enemigo2.hBoxX, enemigo2.hBoxY, enemigo2.ancho, enemigo2.alto) then
-        enemigo2:Empujar(jugador.dirX, jugador.dirY)
-    end
-    if chequearColision(jugador.hBoxX, jugador.hBoxY, jugador.ancho, jugador.alto,
-                         enemigo3.hBoxX, enemigo3.hBoxY, enemigo3.ancho, enemigo3.alto) then
-        enemigo3:Empujar(jugador.dirX, jugador.dirY)
-    end
-    if chequearColision(jugador.hBoxX, jugador.hBoxY, jugador.ancho, jugador.alto,
-                         enemigo5.hBoxX, enemigo5.hBoxY, enemigo5.ancho, enemigo5.alto) then
-        enemigo5:Empujar(jugador.dirX, jugador.dirY)
-    end    
-        
     
     jugador.dashTiempo = jugador.dashTiempo + dt
         if jugador.dashTiempo >= jugador.dashDuracion then
@@ -91,7 +101,7 @@ function jugador.actualizar(dt)
 
             enemigo5:MoverTurno(jugador.posX, jugador.posY)
 
-            jugador.chequearDanio()
+            jugador.chequearDanio(enemigosInteractivos)
         end
         return
     end
@@ -116,28 +126,18 @@ function jugador.mover(dx, dy)
 end
 
 -- Chequear DAÑO
-function jugador.chequearDanio()
+function jugador.chequearDanio(enemigosInteractivos)
     if jugador.dasheando then
         return -- la idea es que en el dash no recibe daño
     end
 
     local golpeado = false
 
-    if enemigo1.vivo and chequearColision(jugador.hBoxX, jugador.hBoxY, jugador.ancho, jugador.alto,
-                                           enemigo1.hBoxX, enemigo1.hBoxY, enemigo1.ancho, enemigo1.alto) then
-        golpeado = true
-    end
-    if enemigo2.vivo and chequearColision(jugador.hBoxX, jugador.hBoxY, jugador.ancho, jugador.alto,
-                                           enemigo2.hBoxX, enemigo2.hBoxY, enemigo2.ancho, enemigo2.alto) then
-        golpeado = true
-    end
-    if enemigo3.vivo and chequearColision(jugador.hBoxX, jugador.hBoxY, jugador.ancho, jugador.alto,
-                                           enemigo3.hBoxX, enemigo3.hBoxY, enemigo3.ancho, enemigo3.alto) then
-        golpeado = true
-    end
-    if enemigo5.vivo and chequearColision(jugador.hBoxX, jugador.hBoxY, jugador.ancho, jugador.alto,
-                                           enemigo5.hBoxX, enemigo5.hBoxY, enemigo5.ancho, enemigo5.alto) then
-        golpeado = true
+    for _, e in ipairs(enemigosInteractivos) do
+        if e.vivo and chequearColision(jugador.hBoxX, jugador.hBoxY, jugador.ancho, jugador.alto,
+                                        e.hBoxX, e.hBoxY, e.ancho, e.alto) then
+            golpeado = true
+        end
     end
 
     if golpeado then
@@ -152,7 +152,7 @@ end
 -- =================== RENDERIZADO ===================
 function jugador.dibujar()
 if jugador.dasheando then
-    love.graphics.setColor(1,1,1,0.85)
+    love.graphics.setColor(1,1,1,0.8)
     love.graphics.draw(jugador.tex2, jugador.posX, jugador.posY, 0, 1.5, 1.5, jugador.origX, jugador.origY)
 end    
 if jugador.enCooldown then
@@ -168,15 +168,4 @@ function chequearColision (x1,y1,ancho1,alto1,x2,y2,ancho2,alto2)
             x2 < x1 + ancho1 and
             y1 < y2 + alto2 and
             y2 < y1 + alto1
-end
-
--- =================== DEPURAR ===================
-function jugador:Debug()
-    love.graphics.setColor(0.13,0,0.20)
-    love.graphics.setFont(love.graphics.newFont(4))
-    love.graphics.rectangle("line", redondear(self.hBoxX), redondear(self.hBoxY), self.ancho, self.alto)
-    love.graphics.print("Pos Jugador X"..self.posX, 10, 10)
-    love.graphics.print("Y "..self.posY, 15, 20)
-    love.graphics.print("Vidas: "..self.vidas, 10, 30)
-    love.graphics.setColor(1,1,1)
 end

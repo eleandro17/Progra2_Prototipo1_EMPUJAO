@@ -6,6 +6,8 @@ function Enemigo:Nuevo(x, y, img )
 
     o.posX = x
     o.posY = y
+    o.spawnX = x
+    o.spawnY = y
     o.tex = love.graphics.newImage(img)
     o.ancho = o.tex:getWidth()
     o.alto  = o.tex:getHeight()
@@ -35,6 +37,28 @@ function Enemigo:Nuevo(x, y, img )
     o.saltoOffset = 0
 
     return o
+end
+
+-- =================== REINICIAR ===================
+-- Resetea el estado a los valores de spawn, sin recargar la textura
+-- ni recrear la instancia (evita generar entidades nuevas en runtime)
+function Enemigo:Reiniciar()
+    self.posX = self.spawnX
+    self.posY = self.spawnY
+    self.vivo = true
+
+    self.empujado = false
+    self.empujeTiempo = 0
+    self.dirX = 0
+    self.dirY = 0
+
+    self.hBoxX = self.posX - self.origX
+    self.hBoxY = self.posY - self.origY
+
+    if self.animCuadros then
+        self.animTiempo = 0
+        self.animActual = 1
+    end
 end
 
 -- MOVER POR TURNO 

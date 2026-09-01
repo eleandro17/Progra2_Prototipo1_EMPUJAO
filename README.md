@@ -25,6 +25,8 @@ hud.lua       -- interfaz de mensajes: pantallas de Game Over / Victoria, FPS
 - **Condición de victoria**: se gana al eliminar a los enemigos principales (caída en el pozo).
 - **Retroalimentación**: sonido de colisión, sonido de fondo, carteles visuales de Game Over / Victoria.
 
+
+
 ## Enemigos actuales
 
 | Enemigo | Comportamiento |
@@ -33,16 +35,15 @@ hud.lua       -- interfaz de mensajes: pantallas de Game Over / Victoria, FPS
 | enemigo2 | Persigue por turno, animado |
 | enemigo3 | Persigue por turno |
 | enemigo4 | NPC decorativo, aùn sin interacción con el ciclo de juego |
-| enemigo5 | Estático, empujable, animado |
+| enemigo5 | Estático, empujable, animado, hace daño |
 
 ## Estado del commit actual
 
-Este commit corresponde al **refactor de modularidad**: se resuelve el acoplamiento entre `jugador.lua` y los enemigos (referenciados antes por nombre global) mediante una colección de enemigos, y se ordenan responsabilidades entre módulos (`hud.lua` separado del loop principal, `Enemigo:Debug()` y `jugador:Debug()` desacoplados entre sí).
+Se agrega: sistema de reinicio con tecla R (reciclado de instancias, sin recrear enemigos/jugador)
 
 ### Pendiente / próximos pasos
 - Optimizar la creación de fuentes en el HUD (se recrean en cada draw de la pantalla de victoria).
-- Evaluar conversión de `jugador` a clase con metatabla, por consistencia con `Enemigo` (no bloqueante para este prototipo).
-- Herencia de comportamientos de enemigos (subclases) — prevista para el próximo prototipo.
+- Convertir personaje (de singleton) a clase
 
 ## Cómo correrlo
 
