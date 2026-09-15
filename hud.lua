@@ -1,10 +1,11 @@
 ---  HUD o  interfaz de mensajes: 
+
 hud = {}
 
 function hud.cargar()
-    hud.imgGameOver = love.graphics.newImage("gameover.png")
-    hud.imgVictoria = love.graphics.newImage("victoria.png")
-    hud.imgVida = love.graphics.newImage("vida.png")
+    hud.imgGameOver = love.graphics.newImage("assets/gameover.png")
+    hud.imgVictoria = love.graphics.newImage("assets/victoria.png")
+    hud.imgVida = love.graphics.newImage("assets/vida.png")
 end
 
 -- Va adentro del canvas 
@@ -31,15 +32,16 @@ function hud.dibujarVidas(vidas)
 end
 
 function hud.dibujarControles(ventana)
-    love.graphics.setFont(love.graphics.newFont(7))
-    love.graphics.setColor(1, 1, 1, 0.8)
-    love.graphics.printf("Flechas: mover | D: dash | R: reiniciar", 0, ventana.alto - 8, ventana.ancho, "center")
+    love.graphics.setFont(love.graphics.newFont(16))
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.printf("Flechas: mover | D: dash | R: reiniciar", 0, ventana.alto - 22, ventana.ancho, "center")
     love.graphics.setColor(1, 1, 1)
 end
 
 
 function hud.dibujarReinicio(ventana)
-    love.graphics.setFont(love.graphics.newFont(8))
+
+    love.graphics.setFont(love.graphics.newFont(10))
     love.graphics.setColor(1, 1, 1)
     love.graphics.printf("(R)einiciar", 0, ventana.alto - 14, ventana.ancho, "center")
 end

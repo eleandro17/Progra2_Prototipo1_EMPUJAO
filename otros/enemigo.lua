@@ -1,47 +1,51 @@
-Enemigo = {}
-Enemigo.__index = Enemigo
+
+
+Enemigo = Class{}
 -- =================== INICIALIZACION ===================
-function Enemigo:Nuevo(x, y, img )
-    local o = setmetatable({}, Enemigo)
+function Enemigo:init(x, y, img , frames, velocidadAnima)
+    
+    self.posX = x
+    self.posY = y
+    self.spawnX = x
+    self.spawnY = y
+    self.tex = love.graphics.newImage(img)
+    self.ancho = self.tex:getWidth()
+    self.alto  = self.tex:getHeight()
+    self.origX = self.ancho / 2
+    self.origY = self.alto / 2
 
-    o.posX = x
-    o.posY = y
-    o.spawnX = x
-    o.spawnY = y
-    o.tex = love.graphics.newImage(img)
-    o.ancho = o.tex:getWidth()
-    o.alto  = o.tex:getHeight()
-    o.origX = o.ancho / 2
-    o.origY = o.alto / 2
-    o.hBoxX = 0
-    o.hBoxY = 0
-   -- o.vel = v YA NO LO uso
+    self.hBoxX = self.posX - self.origX
+    self.hBoxY = self.posY - self.origY
+   
+    self.paso= 8
 
-    o.paso= 8
+    self.vivo = true
+    self.esInteractivo = true
+    self.seMueve = true 
 
-    o.vivo = true
-
--- EMPUJAO    
--- esto serìa como el complementario del dash cuando hay interaccion
-    o.empujado = false
-    o.empujeVel = 500
-    o.empujeDuracion = 0.3
-    o.empujeTiempo = 0
-    o.dirX = 0
-    o.dirY = 0
+-- EMPUJAO -- esto serìa como el complementario del dash cuando hay interaccion
+    self.empujado = false
+    self.empujeVel = 500
+    self.empujeDuracion = 0.3
+    self.empujeTiempo = 0
+    self.dirX = 0
+    self.dirY = 0
 
      -- SALTO (solo animaciòn)
-    o.saltoTiempo = 0
-    o.saltoAltura = 6      -- qué tan alto "salta" en píxeles
-    o.saltoVelocidad = 6   -- qué tan rápido salta
-    o.saltoOffset = 0
+    self.saltoTiempo = 0
+    self.saltoAltura = 6      
+    self.saltoVelocidad = 6   
+    self.saltoOffset = 0
 
-    return o
+    if frames then
+        self:ConfigurarAnimacion(frames, velocidadAnim)
+    end
+
+
 end
 
 -- =================== REINICIAR ===================
--- Resetea el estado a los valores de spawn, sin recargar la textura
--- ni recrear la instancia (evita generar entidades nuevas en runtime)
+-- Resetea el estado a los valores de spawn, sin recargar la textura ni recrear la instancia (evito generar entidades nuevas en runtime)
 function Enemigo:Reiniciar()
     self.posX = self.spawnX
     self.posY = self.spawnY
@@ -166,6 +170,9 @@ function Enemigo:ConfigurarAnimacion(frames, velocidadAnim)
     self.origY = altoFrame / 2
     self.ancho = anchoFrame
     self.alto  = altoFrame
+
+    self.hBoxX = self.posX - self.origX
+    self.hBoxY = self.posY - self.origY
 end
 
 function Enemigo:ActualizarAnimacion(dt)
