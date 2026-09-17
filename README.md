@@ -50,14 +50,16 @@ ZorzalNpc (ada2.png)	ZorzalNpc	No	No	No
 
 ## Estado del commit actual
 
-Conversión de jugador (singleton) a clase Jugador con metatablas, constructor Nuevo, y todos los métodos con la sintaxis :
-Contador de vidas visual ( muy clàsicos corazones) en el HUD: hud.dibujarVidas()
+Se agregaron MaquinaEstado y estados: menu, jugando, ganar, perder
+- Mover lógica de main.lua a cada estado (ingresar/actualizar/dibujar/inputsJuego)
+- Reorganizar dependencias.lua con el nuevo orden de carga
+- Fix: cachear fuentes en hud.lua para evitar texto borroso"
 
 ### Pendiente / próximos pasos
 
-- Optimizar la creación de fuentes en el HUD (se recrean en cada draw de la pantalla de victoria).
+
 - Agregar comportamiento propio a ZorzalNpc (diálogos/interacción).
-- Implementar una maquina de estados para el juego
+- Crear un assets Manager 
 
 
 ## Cómo correrlo
