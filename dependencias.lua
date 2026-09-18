@@ -1,6 +1,7 @@
 Class = require "lib.class" --esta es la class de HUMP
 STI = require "lib.sti"
 CAM = require "lib.camera"
+BUMP = require "lib.bump"
 
 require "jugador"
 require "otros.enemigo"

@@ -19,3 +19,4 @@ function clampCamara(cam, mapaAnchoPx, mapaAltoPx, viewW, viewH)
 
     cam:lookAt(x, y)
 end
+

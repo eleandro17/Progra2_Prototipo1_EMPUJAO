@@ -1,8 +1,7 @@
 Cactusa = Class{__includes = Enemigo}
 
-function Cactusa:init(x, y, img, frames, velocidadAnim)
-    Enemigo.init(self, x, y, img)
-    self:ConfigurarAnimacion(frames, velocidadAnim)
+function Cactusa:init(x, y, img, frames, velocidadAnim, mundobump)
+    Enemigo.init(self, x, y, img, frames, velocidadAnim, mundobump)
     self.seMueve = false
 end
 

@@ -69,17 +69,16 @@ Cactusa (cactusa.png, quieto)	Cactusa	No	Sí	Sí
 ZorzalNpc (ada2.png)	ZorzalNpc	No	No	No
 
 ## Estado del commit actual
+- Implementaciòn del mapa de colisiones con la librerìa bump.lua de kikito. Desde capa de Tiled/STI
+- Fix de argumentos desalineados en Cactusa/Enemigo que causaban mundobump=nil -->
+Chequeo que hace mundobump opcional en Enemigo (ZorzalNpc no colisiona)
+- Fix en Jugador:Colision: comparaba contra "cualquier cosa cerca" en vez
+  del objeto puntual, causando colisión/empuje simultáneo con todos los enemigos
 
-Fix de ciclo de vida de estados y audio de fondo:
-- Planteo de implementaciòn de tilemap con tileset usando STI y el programa Tiled
-- Activar `salir()` en `MaqEstados:cambiar()` 
-- Asegurar que todos los estados (`EstadoMenu`, etc.) hereden de `Estado`
-  para `salir()` disponible por defecto
-- Evitar recrear el `Source` de audio de fondo en cada entrada a
-  `EstadoJugando`: se crea una sola vez y se controla con `play()`/`stop()`
-- Sacar el manejo de audio de `hud.lua` 
-- Cámara (HUMP) clampeada a los límites del mapa (STI) para no mostrar
-  fuera del área jugable
+- Fix de bug de teletransportacion al chocar contra la pared
+- Extiende chequeo de pared a MoverTurno y ActualizarEmpuje de enemigos
+- Agregado de debug visual de hitboxes de paredes
+
 
 ### Pendiente / próximos pasos
 

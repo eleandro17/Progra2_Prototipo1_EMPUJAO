@@ -3,9 +3,8 @@
 Jugador = Class{}
 
 -- =================== INICIALIZACION ===================
-function Jugador:init(x, y)
-    -- local o = setmetatable({}, Jugador)
-
+function Jugador:init(x, y, mundobump)
+   
     self.tex = nil
     self.tex2 = nil
 
@@ -13,6 +12,9 @@ function Jugador:init(x, y)
     self.posY = y
     self.spawnX = x
     self.spawnY = y
+
+    self.anteriorX = self.posX
+    self.anteriorY = self.posY
 
     self.alto = 8
     self.ancho = 8
@@ -38,7 +40,8 @@ function Jugador:init(x, y)
     self.vivo = true
     self.vidas = 3
 
-    --return o
+    self.mundobump = mundobump
+    self.mundobump:add(self, self.hBoxX,self.hBoxY,self.ancho,self.alto)
 end
 
 function Jugador:Cargar()
@@ -86,10 +89,13 @@ function Jugador:Actualizar(dt, enemigos)
 
         self.hBoxX = self.posX - self.origX
         self.hBoxY = self.posY - self.origY
+        if self.mundobump then
+            self.mundobump:update(self, self.hBoxX, self.hBoxY, self.ancho, self.alto)
+        end
 
         -- chequeo de choque contra cada enemigo interactivo mientras dasheo
         for _, e in ipairs(enemigos) do
-            if self:Colision(e.hBoxX, e.hBoxY, e.ancho, e.alto) then
+            if self:Colision(e) then
                 e:Empujar(self.dirX, self.dirY)
             end
         end
@@ -125,20 +131,30 @@ function Jugador:Mover(dx, dy)
     self.dirX = dx
     self.dirY = dy
 
+    local prevX, prevY = self.posX, self.posY -- posición justo antes de este movimiento
+
     self.posX = self.posX + dx * self.paso
     self.posY = self.posY + dy * self.paso
 
     self.hBoxX = self.posX - self.origX
     self.hBoxY = self.posY - self.origY
-end
 
+    self.mundobump:update(self, self.hBoxX, self.hBoxY, self.ancho, self.alto)
+
+    if self:ChocaPared() then
+        self.posX, self.posY = prevX, prevY
+        self.hBoxX = self.posX - self.origX
+        self.hBoxY = self.posY - self.origY
+        self.mundobump:update(self, self.hBoxX, self.hBoxY, self.ancho, self.alto)
+    end
+end
 -- Chequear DAÑO
 function Jugador:ChequearDanio(enemigos)
     if self.dasheando then return end
 
     local golpeado = false
     for _, e in ipairs(enemigos) do
-        if e.esInteractivo and e.vivo and self:Colision(e.hBoxX, e.hBoxY, e.ancho, e.alto) then
+        if e.esInteractivo and e.vivo and self:Colision(e) then
             golpeado = true
         end
     end
@@ -173,9 +189,22 @@ end
 
 
 
-function Jugador:Colision(otro_hBoxX, otro_hBoxY, otro_ancho, otro_alto)
-    return self.hBoxX < otro_hBoxX + otro_ancho and
-           otro_hBoxX < self.hBoxX + self.ancho and
-           self.hBoxY < otro_hBoxY + otro_alto and
-           otro_hBoxY < self.hBoxY + self.alto
+function Jugador:Colision(otro)
+    local hBoxes, cant = self.mundobump:queryRect(self.hBoxX, self.hBoxY, self.ancho, self.alto)
+    for i = 1, cant do
+        if hBoxes[i] == otro then
+            return true
+        end
+    end
+    return false
+end
+
+function Jugador:ChocaPared()
+    local hBoxes, cant = self.mundobump:queryRect(self.hBoxX, self.hBoxY, self.ancho, self.alto)
+    for i = 1, cant do
+        if hBoxes[i].esPared then
+            return true
+        end
+    end
+    return false
 end

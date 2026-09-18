@@ -1,6 +1,7 @@
 EstadoMenu = Class{__includes = Estado}
 
 function EstadoMenu:init()
+    texFondo = love.graphics.newImage("assets/fondo.png")
 end
 
 function EstadoMenu:ingresar(parametros)
@@ -13,9 +14,11 @@ function EstadoMenu:dibujar()
     love.graphics.setCanvas(lienzo)
     love.graphics.clear()
 
+    love.graphics.draw(texFondo, 0, 0,0,1,1,0,0)
+
     love.graphics.setFont(love.graphics.newFont(20))
-    love.graphics.setColor(1,0,0.80)
-    love.graphics.printf(" MENÛ. Apretà ENTER para jugar ", 0, ventana.alto/2, ventana.ancho, "center")
+    love.graphics.setColor(1,0,3.90)
+    love.graphics.printf(" Apretá ENTER empezar ", 0, ventana.alto/2, ventana.ancho, "center")
     love.graphics.setColor(1, 1, 1)
     
 

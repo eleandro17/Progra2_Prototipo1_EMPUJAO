@@ -13,10 +13,11 @@ enColision = false
 
 hasGanao = false
 
-
 mapa = nil
 
 camara = nil
+
+mundobump = nil
 
 
 MaqEstadoGlobal = MaqEstados{
@@ -26,7 +27,7 @@ MaqEstadoGlobal = MaqEstados{
     ["menu"] = function() return EstadoMenu() end
 }
 
---MaqEstadoGlobal:cambiar("jugando")
+
 
 function enPozo(x, y)
     return x < limites.minX or x > limites.maxX or y < limites.minY or y > limites.maxY
@@ -35,29 +36,15 @@ end
 
 -- =================== INICIALIZACION ===================
 function love.load()
-    love.window.setMode(ventana.ancho* ventana.escala, ventana.alto *ventana.escala)
+    love.window.setMode(ventana.ancho * ventana.escala, ventana.alto * ventana.escala)
     love.graphics.setDefaultFilter("nearest","nearest")
     lienzo = love.graphics.newCanvas(ventana.ancho, ventana.alto)
 
     hud.cargar()
+
     
-    MaqEstadoGlobal:cambiar("menu") 
-
-    mapa = STI ("mapa/escena1.lua")
-
-    local mapaAnchoPx = mapa.width * mapa.tilewidth
-    local mapaAltoPx = mapa.height * mapa.tileheight
-
-    limites = {
-    minX = 8,
-    maxX = mapaAnchoPx - 8,
-    minY = 8,
-    maxY = mapaAltoPx - 8
-    }
-
-    camara = CAM()
-    
-    end
+    MaqEstadoGlobal:cambiar("menu")
+end
 
 
 -- =================== INTERACCION ===================

@@ -1,8 +1,6 @@
-
-
 Enemigo = Class{}
 -- =================== INICIALIZACION ===================
-function Enemigo:init(x, y, img , frames, velocidadAnima)
+function Enemigo:init(x, y, img , frames, velocidadAnima, mundobump)
     
     self.posX = x
     self.posY = y
@@ -37,8 +35,15 @@ function Enemigo:init(x, y, img , frames, velocidadAnima)
     self.saltoVelocidad = 6   
     self.saltoOffset = 0
 
+    self.mundobump = mundobump
+
+    self.es_enemigo = true
+    
+    if self.mundobump then -- lo chequeo asi porque no todos necesitan mundobump
+    self.mundobump:add(self, self.hBoxX, self.hBoxY, self.ancho, self.alto)
+end
     if frames then
-        self:ConfigurarAnimacion(frames, velocidadAnim)
+        self:ConfigurarAnimacion(frames, velocidadAnima)
     end
 
 
@@ -65,6 +70,8 @@ function Enemigo:Reiniciar()
     end
 end
 
+-- = = = = = = = == = = = ==================== ACTUALIZAR ===================
+
 -- MOVER POR TURNO 
 function Enemigo:MoverTurno(jugadorX, jugadorY)
     if not self.vivo then return end
@@ -79,13 +86,26 @@ function Enemigo:MoverTurno(jugadorX, jugadorY)
         dy = distY > 0 and 1 or -1
     end
 
+    local prevX, prevY = self.posX, self.posY
+
     self.posX = self.posX + dx * self.paso
     self.posY = self.posY + dy * self.paso
 
     self.hBoxX = self.posX - self.origX
     self.hBoxY = self.posY - self.origY
+
+    if self.mundobump then
+        self.mundobump:update(self, self.hBoxX, self.hBoxY, self.ancho, self.alto)
+
+        if self:ChocaPared() then
+            self.posX, self.posY = prevX, prevY
+            self.hBoxX = self.posX - self.origX
+            self.hBoxY = self.posY - self.origY
+            self.mundobump:update(self, self.hBoxX, self.hBoxY, self.ancho, self.alto)
+        end
+    end
 end
--- =================== ACTUALIZAR ===================
+
 
 -- EMPUJE (mas bien ser EMPUJAO)
 function Enemigo:Empujar(dx, dy)
@@ -102,11 +122,26 @@ function Enemigo:ActualizarEmpuje(dt)
     if not self.vivo then return end
 
     if self.empujado then
+        local prevX, prevY = self.posX, self.posY
+
         self.posX = self.posX + self.dirX * self.empujeVel * dt
         self.posY = self.posY + self.dirY * self.empujeVel * dt
 
         self.hBoxX = self.posX - self.origX
         self.hBoxY = self.posY - self.origY
+
+        if self.mundobump then
+            self.mundobump:update(self, self.hBoxX, self.hBoxY, self.ancho, self.alto)
+
+            if self:ChocaPared() then
+                self.posX, self.posY = prevX, prevY
+                self.hBoxX = self.posX - self.origX
+                self.hBoxY = self.posY - self.origY
+                self.mundobump:update(self, self.hBoxX, self.hBoxY, self.ancho, self.alto)
+                self.empujado = false -- corto el impulso de empuje
+                self.empujeTiempo = 0
+            end
+        end
 
         self.empujeTiempo = self.empujeTiempo + dt
         if self.empujeTiempo >= self.empujeDuracion then
@@ -138,10 +173,12 @@ function Enemigo:Debug()
 
     love.graphics.rectangle("line", redondear(self.hBoxX), redondear(self.hBoxY), self.ancho, self.alto)
     love.graphics.circle("fill", redondear(self.posX), redondear(self.posY), 1)
-
-    love.graphics.print("Ancho: "..self.ancho.." Alto: "..self.alto, redondear(self.posX), redondear(self.posY) - 20)
+    --love.graphics.setFont(love.graphics.newFont(8))
+    --love.graphics.print("Ancho: "..self.ancho.." Alto: "..self.alto, redondear(self.posX), redondear(self.posY) - 20)
     love.graphics.print("Frame: "..(self.animActual or "sin animar"), redondear(self.posX), redondear(self.posY) - 10)
 end
+
+-- REDONDEO -- tendrìa que ir a utilidades
 
 function redondear(n)
     return math.floor(n + 0.5)
@@ -186,4 +223,15 @@ function Enemigo:ActualizarAnimacion(dt)
             self.animActual = 1
         end
     end
+end
+
+function Enemigo:ChocaPared()
+    if not self.mundobump then return false end
+    local hBoxes, cant = self.mundobump:queryRect(self.hBoxX, self.hBoxY, self.ancho, self.alto)
+    for i = 1, cant do
+        if hBoxes[i].esPared then
+            return true
+        end
+    end
+    return false
 end
