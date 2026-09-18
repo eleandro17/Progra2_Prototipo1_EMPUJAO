@@ -41,7 +41,7 @@ function hud.dibujarGameOver(ventana, sonidoFon)
     local x = ventana.ancho/2 - hud.imgGameOver:getWidth()/2
     local y = ventana.alto/2 - hud.imgGameOver:getHeight()/2
     love.graphics.draw(hud.imgGameOver, x, y)
-    sonidoFon:stop()
+    --sonidoFon:stop()
 end
 
 function hud.dibujarVictoria(ventana)

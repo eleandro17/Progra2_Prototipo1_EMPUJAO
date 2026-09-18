@@ -1,4 +1,4 @@
-# AmorNuevo — Prototipo 1: Core Loop
+# AmorNuevo — Prototipo 2: Maquina de Estados
 
 Prototipo desarrollado para la materia **Programación de Videojuegos 2** (Tecnicatura en Diseño y Programación de Videojuegos, FICH). Hecho en **LÖVE2D (Lua)**.
 
@@ -15,13 +15,33 @@ R	Reiniciar la partida (en cualquier momento)
 ## Estructura del proyecto
 
 ```
-main.lua          -- loop principal (load, update, draw, keypressed), configuración de ventana y límites
-dependencias.lua  -- requiere HUMP (Class) y todos los módulos del proyecto, en orden
-jugador.lua       -- clase Jugador (con HUMP): movimiento, dash, colisiones, daño
-enemigo.lua       -- clase base Enemigo (con HUMP): movimiento por turno, empuje, animación opcional
-otros/cactus.lua  -- clase Cactusa (hereda de Enemigo): variante animada
-otros/zorzal.lua  -- clase ZorzalNpc (hereda de Enemigo): NPC sin interacción, solo dibujado
-hud.lua           -- interfaz de mensajes: pantallas de Game Over / Victoria, FPS
+main.lua              -- loop principal (load, update, draw, keypressed), configuración de ventana, límites y enPozo 
+dependencias.lua       -- requiere HUMP/STI y todos los módulos del proyecto
+utilidades.lua          -- funciones auxiliares (clamp de cámara, etc.)
+
+estados/
+  maqEstados.lua        -- máquina de estados genérica (cambiar, estado actual)
+  estado.lua             -- clase base Estado (init/ingresar/salir/actualizar/dibujar/reiniciar)
+  estadoMenu.lua          -- pantalla de menú principal
+  estadoJugando.lua       -- estado de juego: lógica del core loop, cámara, colisiones
+  estadoGanar.lua         -- pantalla de victoria
+  estadoPerder.lua        -- pantalla de game over
+
+jugador.lua             -- clase Jugador (con HUMP): movimiento, dash, colisiones, daño
+otros/
+  enemigo.lua            -- clase base Enemigo (con HUMP): movimiento por turno, empuje, animación opcional
+  cactus.lua              -- clase Cactusa (hereda de Enemigo): variante animada
+  zorzal.lua              -- clase ZorzalNpc (hereda de Enemigo): NPC sin interacción, solo dibujado
+
+hud.lua                 -- interfaz de mensajes: vidas, pantallas de Game Over/Victoria, FPS
+
+mapa/
+  escena1.lua             -- mapa exportado 
+
+lib/                    -- librerías externas 
+  class.lua               
+  camera.lua              
+  sti/                    
 ```
 
 ## Mecánicas implementadas
@@ -50,16 +70,24 @@ ZorzalNpc (ada2.png)	ZorzalNpc	No	No	No
 
 ## Estado del commit actual
 
-Se agregaron MaquinaEstado y estados: menu, jugando, ganar, perder
-- Mover lógica de main.lua a cada estado (ingresar/actualizar/dibujar/inputsJuego)
-- Reorganizar dependencias.lua con el nuevo orden de carga
-- Fix: cachear fuentes en hud.lua para evitar texto borroso"
+Fix de ciclo de vida de estados y audio de fondo:
+- Planteo de implementaciòn de tilemap con tileset usando STI y el programa Tiled
+- Activar `salir()` en `MaqEstados:cambiar()` 
+- Asegurar que todos los estados (`EstadoMenu`, etc.) hereden de `Estado`
+  para `salir()` disponible por defecto
+- Evitar recrear el `Source` de audio de fondo en cada entrada a
+  `EstadoJugando`: se crea una sola vez y se controla con `play()`/`stop()`
+- Sacar el manejo de audio de `hud.lua` 
+- Cámara (HUMP) clampeada a los límites del mapa (STI) para no mostrar
+  fuera del área jugable
 
 ### Pendiente / próximos pasos
 
 
 - Agregar comportamiento propio a ZorzalNpc (diálogos/interacción).
 - Crear un assets Manager 
+- Implementar el pozo como capa/objeto real en Tiled (por ahora sigue
+  siendo un rectángulo hardcodeado en base al tamaño del mapa). Antes sacarlo de Main.lua
 
 
 ## Cómo correrlo

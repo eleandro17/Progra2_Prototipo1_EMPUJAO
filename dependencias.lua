@@ -1,4 +1,6 @@
 Class = require "lib.class" --esta es la class de HUMP
+STI = require "lib.sti"
+CAM = require "lib.camera"
 
 require "jugador"
 require "otros.enemigo"
@@ -14,4 +16,6 @@ require "estados.estadoJugando"
 require "estados.maqEstados"
 
 require "estados.estadoMenu"
+
+require "utilidades"
 

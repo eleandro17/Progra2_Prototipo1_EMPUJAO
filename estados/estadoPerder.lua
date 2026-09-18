@@ -1,4 +1,4 @@
-EstadoPerder = Class{}
+EstadoPerder = Class{__includes=Estado}
 
 function EstadoPerder:init()
 end
@@ -15,7 +15,7 @@ function EstadoPerder:dibujar()
 
     love.graphics.draw(texFondo, 0, 0, 0, 1, 1, 0, 0)
 
-    hud.dibujarGameOver(ventana, sonidoFon)
+    hud.dibujarGameOver(ventana)
     
 
     love.graphics.setCanvas()

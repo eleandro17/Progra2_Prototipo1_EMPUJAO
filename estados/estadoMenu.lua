@@ -1,4 +1,4 @@
-EstadoMenu = Class{}
+EstadoMenu = Class{__includes = Estado}
 
 function EstadoMenu:init()
 end

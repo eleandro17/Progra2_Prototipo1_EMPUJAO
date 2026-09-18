@@ -13,12 +13,10 @@ enColision = false
 
 hasGanao = false
 
-limites = {
-    minX = 8,
-    maxX = ventana.ancho - 8,
-    minY = 8,
-    maxY = ventana.alto - 8
-}
+
+mapa = nil
+
+camara = nil
 
 
 MaqEstadoGlobal = MaqEstados{
@@ -44,6 +42,20 @@ function love.load()
     hud.cargar()
     
     MaqEstadoGlobal:cambiar("menu") 
+
+    mapa = STI ("mapa/escena1.lua")
+
+    local mapaAnchoPx = mapa.width * mapa.tilewidth
+    local mapaAltoPx = mapa.height * mapa.tileheight
+
+    limites = {
+    minX = 8,
+    maxX = mapaAnchoPx - 8,
+    minY = 8,
+    maxY = mapaAltoPx - 8
+    }
+
+    camara = CAM()
     
     end
 

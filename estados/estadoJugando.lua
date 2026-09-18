@@ -6,6 +6,9 @@
 
     sonidoColision = love.audio.newSource("assets/colision.ogg", "static")
     sonidoFon = love.audio.newSource("assets/samplfondo.ogg", "stream")
+    sonidoFon:setLooping(true)
+    sonidoFon:setVolume(0.5)
+    love.audio.play(sonidoFon)
     
     self.enemigos = {}
   
@@ -33,15 +36,19 @@
 end
 
     function EstadoJugando:actualizar(dt)
+        
           if not self.jugador.vivo then
             MaqEstadoGlobal:cambiar("perder")
         return -- si ya murió, no actualizo  más
     end
-    sonidoFon:setVolume(0.5)
-    love.audio.play(sonidoFon)-- sonido de Fondo
+  
 
 
     self.jugador:Actualizar(dt, self.enemigos)
+
+    camara:lookAt(self.jugador.posX,self.jugador.posY)
+    
+clampCamara(camara, mapa.width * mapa.tilewidth, mapa.height * mapa.tileheight, ventana.ancho, ventana.alto)
 
     for _, e in ipairs(self.enemigos) do
         e:ActualizarEmpuje(dt)
@@ -74,8 +81,10 @@ end
    function EstadoJugando:dibujar()
     love.graphics.setCanvas(lienzo)
     love.graphics.clear()
-    love.graphics.draw(texFondo, 0, 0,0,1,1,0,0)
-
+    --love.graphics.draw(texFondo, 0, 0,0,1,1,0,0)
+    camara:attach(0,0,ventana.ancho,ventana.alto)
+    --mapa:draw()
+    mapa:drawLayer(mapa.layers["piso"])
     self.jugador:Dibujar()
 
     for _, e in ipairs(self.enemigos) do
@@ -84,7 +93,7 @@ end
 
     hud.dibujarVidas(self.jugador.vidas)
    
-
+    camara:detach()
     love.graphics.setCanvas()
     love.graphics.draw(lienzo,0,0,0,ventana.escala,ventana.escala)
 
@@ -119,5 +128,12 @@ function EstadoJugando:inputsJuego(key)
         end
 
         self.jugador:ChequearDanio(self.enemigos)
+    end
+end
+
+function EstadoJugando:salir()
+    if sonidoFon then
+        sonidoFon:stop()
+        --sonidoFon = nil
     end
 end

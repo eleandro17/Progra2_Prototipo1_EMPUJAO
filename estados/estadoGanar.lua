@@ -1,4 +1,4 @@
-EstadoGanar = Class{}
+EstadoGanar = Class{__includes=Estado}
 
 function EstadoGanar:init()
 end
