@@ -49,10 +49,10 @@ function hud.dibujarVictoria(ventana)
     local y = ventana.alto/2 - hud.imgVictoria:getHeight()/2
     love.graphics.draw(hud.imgVictoria, x, y)
 
-    love.graphics.setFont(love.graphics.newFont(10))
-    love.graphics.setColor(0.13,0,0.20)
-    love.graphics.printf(" Pero quedaste solito ", 0, ventana.alto/2 + 30, ventana.ancho, "center")
-    love.graphics.setColor(1, 1, 1)
+    -- love.graphics.setFont(love.graphics.newFont(10))
+    -- love.graphics.setColor(0.13,0,0.20)
+    -- love.graphics.printf(" Pero quedaste solito ", 0, ventana.alto/2 + 30, ventana.ancho, "center")
+    -- love.graphics.setColor(1, 1, 1)
 end
 
 --  sin escalar (osea afuera del canvas)

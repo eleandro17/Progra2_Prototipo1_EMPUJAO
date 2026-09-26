@@ -1,6 +1,7 @@
 EstadoPerder = Class{__includes=Estado}
 
 function EstadoPerder:init()
+    texFondo = love.graphics.newImage ("assets/fondo.png")
 end
 
 function EstadoPerder:ingresar(parametros)

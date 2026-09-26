@@ -210,6 +210,10 @@ function Enemigo:ConfigurarAnimacion(frames, velocidadAnim)
 
     self.hBoxX = self.posX - self.origX
     self.hBoxY = self.posY - self.origY
+-- corrijo acà un bug de colision entre la posicion asignada por el mapa de tiled y el update de mundobump
+     if self.mundobump then
+        self.mundobump:update(self, self.hBoxX, self.hBoxY, self.ancho, self.alto)
+    end
 end
 
 function Enemigo:ActualizarAnimacion(dt)
@@ -230,6 +234,30 @@ function Enemigo:ChocaPared()
     local hBoxes, cant = self.mundobump:queryRect(self.hBoxX, self.hBoxY, self.ancho, self.alto)
     for i = 1, cant do
         if hBoxes[i].esPared then
+            return true
+        end
+    end
+    return false
+end
+
+-- function Enemigo:EnPozo()
+--     if not self.mundobump then return false end
+--     local hBoxes, cant = self.mundobump:queryRect(self.hBoxX, self.hBoxY, self.ancho, self.alto)
+--     for i = 1, cant do
+--         if hBoxes[i].esPozo then
+--             return true
+--         end
+--     end
+--     return false
+-- end
+
+-- metodo de Caìda pero con queryPoint
+
+function Enemigo:EnPozo()
+    if not self.mundobump then return false end
+    local items, cant = self.mundobump:queryPoint(self.posX, self.posY)
+    for i = 1, cant do
+        if items[i].esPozo then
             return true
         end
     end

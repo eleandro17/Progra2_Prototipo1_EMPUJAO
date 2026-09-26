@@ -208,3 +208,25 @@ function Jugador:ChocaPared()
     end
     return false
 end
+
+-- function Jugador:EnPozo()
+--     local hBoxes, cant = self.mundobump:queryRect(self.hBoxX, self.hBoxY, self.ancho, self.alto)
+--     for i = 1, cant do
+--         if hBoxes[i].esPozo then
+--             return true
+--         end
+--     end
+--     return false
+-- end
+
+-- Con queryPoint
+function Jugador:EnPozo()
+    local items, cant = self.mundobump:queryPoint(self.posX, self.posY)
+    
+    for i = 1, cant do
+            if items[i].esPozo then
+            return true
+        end
+    end
+    return false
+end

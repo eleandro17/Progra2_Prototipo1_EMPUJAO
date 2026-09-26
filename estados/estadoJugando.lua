@@ -9,6 +9,20 @@
     love.audio.play(sonidoFon)
     
     mapa = STI ("mapa/escena1.lua")
+--
+    self.debugCapas = {}
+local function listarCapas(layers, prefijo)
+    prefijo = prefijo or ""
+    for _, capa in ipairs(layers) do
+        table.insert(self.debugCapas, prefijo .. capa.name .. " (tipo: " .. capa.type .. ")")
+        if capa.type == "group" and capa.layers then
+            listarCapas(capa.layers, prefijo .. "  ")
+        end
+    end
+end
+listarCapas(mapa.layers)
+-- ---
+    
     mundobump = BUMP.newWorld(8)
     
     self.enemigos = {}
@@ -18,12 +32,32 @@
     self.jugador:Cargar()
     hud.cargar()
             
-    table.insert(self.enemigos, Cactusa(30, 90, "assets/cactusa.png", 2, 6, mundobump))      
-    table.insert(self.enemigos, Enemigo(80, 100, "assets/edo-sheet.png", 2, 2, mundobump))     
-    table.insert(self.enemigos, Enemigo(130, 72, "assets/ada.png", nil, nil, mundobump))        
-    table.insert(self.enemigos, Cactusa(100, 30, "assets/cactusa.png", 2, 3, mundobump))       
-    table.insert(self.enemigos, ZorzalNpc(100, 100, "assets/ada2.png"))       
+    -- table.insert(self.enemigos, Cactusa(30, 90, "assets/cactusa.png", 2, 6, mundobump))      
+    -- table.insert(self.enemigos, Enemigo(80, 100, "assets/edo-sheet.png", 2, 2, mundobump))     
+    -- table.insert(self.enemigos, Enemigo(130, 72, "assets/ada.png", nil, nil, mundobump))        
+    -- table.insert(self.enemigos, Cactusa(100, 30, "assets/cactusa.png", 2, 3, mundobump))       
+    -- table.insert(self.enemigos, ZorzalNpc(100, 100, "assets/ada2.png"))       
     
+    self.debugEntidades = {}
+
+if mapa.layers["entidades"] then
+    for _, obj in ipairs(mapa.layers["entidades"].objects) do
+        table.insert(self.debugEntidades, string.format("'%s' x=%d y=%d", tostring(obj.name), obj.x, obj.y))
+
+        if obj.name == "Cactusa" then
+            table.insert(self.enemigos, Cactusa(obj.x, obj.y, "assets/cactusa.png", 2, 6, mundobump))
+        elseif obj.name == "Enemigo" then
+            table.insert(self.enemigos, Enemigo(obj.x, obj.y, "assets/edo-sheet.png", 2, 2, mundobump))
+        elseif obj.name == "Enemigo2" then
+            table.insert(self.debugEntidades, ">>> entrando a Enemigo2")
+            table.insert(self.enemigos, Enemigo(obj.x, obj.y, "assets/ada.png", nil, nil, mundobump))
+            table.insert(self.debugEntidades, ">>> Enemigo2 insertado, total: " .. #self.enemigos)
+        elseif obj.name == "ZorzalNPC" then
+            table.insert(self.enemigos, ZorzalNpc(obj.x, obj.y, "assets/ada2.png"))
+        end
+    end
+
+end
     
 
     
@@ -34,6 +68,16 @@ if mapa.layers["paredes"] then
         mundobump:add(obj, obj.x, obj.y, obj.width, obj.height)
     end
 end
+
+if mapa.layers["caida"] then
+    print(mapa.layers["caida"].objects) 
+    for _, obj in ipairs(mapa.layers["caida"].objects) do
+        obj.esPozo = true
+        mundobump:add(obj, obj.x, obj.y, obj.width, obj.height)
+    end
+end
+
+
 
 local mapaAnchoPx = mapa.width * mapa.tilewidth
 local mapaAltoPx = mapa.height * mapa.tileheight
@@ -72,20 +116,34 @@ end
     
 clampCamara(camara, mapa.width * mapa.tilewidth, mapa.height * mapa.tileheight, ventana.ancho, ventana.alto)
 
-    for _, e in ipairs(self.enemigos) do
-        e:ActualizarEmpuje(dt)
-        e:ActualizarAnimacion(dt) -- no hace nada si el enemigo no tiene animación configurada
+    -- for _, e in ipairs(self.enemigos) do
+    --     e:ActualizarEmpuje(dt)
+    --     e:ActualizarAnimacion(dt) -- no hace nada si el enemigo no tiene animación configurada
 
-        if e.vivo and enPozo(e.posX, e.posY) then
-            e.vivo = false
-        end
-    end
+    --     if e.vivo and enPozo(e.posX, e.posY) then
+    --         e.vivo = false
+    --     end
+    -- end
 
     
-    if enPozo(self.jugador.posX, self.jugador.posY) then
-        self.jugador.vivo = false
-        MaqEstadoGlobal:cambiar("perder")
+    -- if enPozo(self.jugador.posX, self.jugador.posY) then
+    --     self.jugador.vivo = false
+    --     MaqEstadoGlobal:cambiar("perder")
+    -- end
+
+    for _, e in ipairs(self.enemigos) do
+    e:ActualizarEmpuje(dt)
+    e:ActualizarAnimacion(dt)
+
+    if e.vivo and e:EnPozo() then
+        e.vivo = false
     end
+end
+
+if self.jugador:EnPozo() then
+    self.jugador.vivo = false
+    MaqEstadoGlobal:cambiar("perder")
+end
 
     -- Condicion de VIctoria
     local quedanEnemigosVivos = false
@@ -108,28 +166,39 @@ end
     
     mapa:drawLayer(mapa.layers["piso"])
     self.jugador:Dibujar()
-    self.jugador:Debug()
+    --self.jugador:Debug() ----------------
 
     for _, e in ipairs(self.enemigos) do
         e:Dibujar()
-        e:Debug() ----------------------
+        --e:Debug() ----------------------
     end
     
     -- Debug hitboxes de paredes
-    love.graphics.setColor(1, 0, 0) -- para diferenciar de jugador/enemigos
-    if mapa.layers["paredes"] then
-        for _, obj in ipairs(mapa.layers["paredes"].objects) do
-            love.graphics.rectangle("line", obj.x, obj.y, obj.width, obj.height)
-        end
-    end
+    -- love.graphics.setColor(1, 0, 0) -- para diferenciar de jugador/enemigos
+    -- if mapa.layers["paredes"] then
+    --     for _, obj in ipairs(mapa.layers["paredes"].objects) do
+    --         love.graphics.rectangle("line", obj.x, obj.y, obj.width, obj.height)
+    --     end
+    -- end
 
-    love.graphics.setColor(1, 1, 1) -- resetear color
+    -- love.graphics.setColor(1, 1, 1) -- resetear color
 
     hud.dibujarVidas(self.jugador.vidas)
    
     camara:detach()
-    love.graphics.setCanvas()
-    love.graphics.draw(lienzo,0,0,0,ventana.escala,ventana.escala)
+
+    -- Debug en pantalla de instancias de enemigos
+-- for i, linea in ipairs(self.debugEntidades or {}) do
+--     love.graphics.print(linea, 10, 10 + (i-1) * 12)
+-- end
+
+    -- Debug en pantalla (fuera del canvas chico
+-- for i, linea in ipairs(self.debugCapas) do
+--     love.graphics.print(linea, 10, 30 + (i-1) * 12)
+-- end
+
+   love.graphics.setCanvas()
+   love.graphics.draw(lienzo,0,0,0,ventana.escala,ventana.escala)
 
     
     --hud.dibujarControles(ventana)    

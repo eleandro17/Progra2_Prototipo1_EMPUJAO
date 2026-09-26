@@ -69,24 +69,23 @@ Cactusa (cactusa.png, quieto)	Cactusa	No	Sí	Sí
 ZorzalNpc (ada2.png)	ZorzalNpc	No	No	No
 
 ## Estado del commit actual
-- Implementaciòn del mapa de colisiones con la librerìa bump.lua de kikito. Desde capa de Tiled/STI
-- Fix de argumentos desalineados en Cactusa/Enemigo que causaban mundobump=nil -->
-Chequeo que hace mundobump opcional en Enemigo (ZorzalNpc no colisiona)
-- Fix en Jugador:Colision: comparaba contra "cualquier cosa cerca" en vez
-  del objeto puntual, causando colisión/empuje simultáneo con todos los enemigos
+- FIx de argumentos desalineados en Cactusa/Enemigo (mundobump=nil)
+- Mundobump se hace opcional en Enemigo (ZorzalNpc no colisiona)
+- Fix en Colision: comparaba contra "cualquier cosa cerca" en vez del objeto puntual, causando colisión/empuje simultáneo con todos los enemigos
+- Agregué detección de pozos vía queryPoint (en reemplazo de enPozo con límites hardcodeados)
+- Muevo la inicialización de mapa/mundobump/cámara de main.lua a EstadoJugando (mundobump limpio en cada partida)
 
-- Fix de bug de teletransportacion al chocar contra la pared
-- Extiende chequeo de pared a MoverTurno y ActualizarEmpuje de enemigos
-- Agregado de debug visual de hitboxes de paredes
-
+- Cambio la forma de instanciar enemigos. Ahora desde capa "entidades" de Tiled usando obj.x/obj.y
+- Sincroniza hitbox con mundobump tras ConfigurarAnimacion (fix colisión Cactusa)
+- Pantalla de menù y estadoGanar con dibujos nuevos 
 
 ### Pendiente / próximos pasos
 
 
 - Agregar comportamiento propio a ZorzalNpc (diálogos/interacción).
 - Crear un assets Manager 
-- Implementar el pozo como capa/objeto real en Tiled (por ahora sigue
-  siendo un rectángulo hardcodeado en base al tamaño del mapa). Antes sacarlo de Main.lua
+- Corregir el hud de corazones/vidas que quedò despegado de la càmara
+- Sacar el mètodo reiniciar() y usar el init() de cada estados directamente
 
 
 ## Cómo correrlo

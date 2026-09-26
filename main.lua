@@ -3,22 +3,9 @@ require "dependencias"
 
 -- =================== DECLARACION ===================
 
-ventana = {
-    alto = 136, ancho = 240, escala = 3
-}
-
-texFondo = nil
-
-enColision = false
+ventana = {     alto = 136, ancho = 240, escala = 3 }
 
 hasGanao = false
-
-mapa = nil
-
-camara = nil
-
-mundobump = nil
-
 
 MaqEstadoGlobal = MaqEstados{
     ["jugando" ] = function() return EstadoJugando() end,
@@ -26,12 +13,6 @@ MaqEstadoGlobal = MaqEstados{
     ["perder"] = function() return EstadoPerder() end,
     ["menu"] = function() return EstadoMenu() end
 }
-
-
-
-function enPozo(x, y)
-    return x < limites.minX or x > limites.maxX or y < limites.minY or y > limites.maxY
-end
 
 
 -- =================== INICIALIZACION ===================
