@@ -13,9 +13,12 @@ function MaqEstados:init(estados)
 
 end
 
+
 function MaqEstados:cambiar(nEstado)
+   
     assert(self.estados[nEstado])
     self.actual:salir()
+    
     self.actual = self.estados[nEstado]()
     
 end

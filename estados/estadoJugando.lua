@@ -10,17 +10,17 @@
     
     mapa = STI ("mapa/escena1.lua")
 --
-    self.debugCapas = {}
-local function listarCapas(layers, prefijo)
-    prefijo = prefijo or ""
-    for _, capa in ipairs(layers) do
-        table.insert(self.debugCapas, prefijo .. capa.name .. " (tipo: " .. capa.type .. ")")
-        if capa.type == "group" and capa.layers then
-            listarCapas(capa.layers, prefijo .. "  ")
-        end
-    end
-end
-listarCapas(mapa.layers)
+--     self.debugCapas = {}
+-- local function listarCapas(layers, prefijo)
+--     prefijo = prefijo or ""
+--     for _, capa in ipairs(layers) do
+--         table.insert(self.debugCapas, prefijo .. capa.name .. " (tipo: " .. capa.type .. ")")
+--         if capa.type == "group" and capa.layers then
+--             listarCapas(capa.layers, prefijo .. "  ")
+--         end
+--     end
+-- end
+-- listarCapas(mapa.layers)
 -- ---
     
     mundobump = BUMP.newWorld(8)
@@ -31,15 +31,10 @@ listarCapas(mapa.layers)
     
     self.jugador:Cargar()
     hud.cargar()
-            
-    -- table.insert(self.enemigos, Cactusa(30, 90, "assets/cactusa.png", 2, 6, mundobump))      
-    -- table.insert(self.enemigos, Enemigo(80, 100, "assets/edo-sheet.png", 2, 2, mundobump))     
-    -- table.insert(self.enemigos, Enemigo(130, 72, "assets/ada.png", nil, nil, mundobump))        
-    -- table.insert(self.enemigos, Cactusa(100, 30, "assets/cactusa.png", 2, 3, mundobump))       
-    -- table.insert(self.enemigos, ZorzalNpc(100, 100, "assets/ada2.png"))       
-    
+         
     self.debugEntidades = {}
 
+-- Instanciar elementos de Capas de tiled
 if mapa.layers["entidades"] then
     for _, obj in ipairs(mapa.layers["entidades"].objects) do
         table.insert(self.debugEntidades, string.format("'%s' x=%d y=%d", tostring(obj.name), obj.x, obj.y))
@@ -59,9 +54,6 @@ if mapa.layers["entidades"] then
 
 end
     
-
-    
-
 if mapa.layers["paredes"] then
     for _,obj in ipairs(mapa.layers["paredes"].objects) do
         obj.esPared = true
@@ -70,7 +62,7 @@ if mapa.layers["paredes"] then
 end
 
 if mapa.layers["caida"] then
-    print(mapa.layers["caida"].objects) 
+    --print(mapa.layers["caida"].objects) 
     for _, obj in ipairs(mapa.layers["caida"].objects) do
         obj.esPozo = true
         mundobump:add(obj, obj.x, obj.y, obj.width, obj.height)
@@ -82,30 +74,16 @@ end
 local mapaAnchoPx = mapa.width * mapa.tilewidth
 local mapaAltoPx = mapa.height * mapa.tileheight
 
-limites = {
-    minX = 8, maxX = mapaAnchoPx - 8,
-    minY = 8, maxY = mapaAltoPx - 8
-}
 
 camara = CAM()
     
-end
-
-function EstadoJugando:reiniciar()
-    self.jugador:Reiniciar()
-
-    for _, e in ipairs(self.enemigos) do
-        e:Reiniciar()
-    end
-
-    hasGanao = false
 end
 
     function EstadoJugando:actualizar(dt)
         
           if not self.jugador.vivo then
             MaqEstadoGlobal:cambiar("perder")
-        return -- si ya murió, no actualizo  más
+        return 
     end
   
 
@@ -115,22 +93,7 @@ end
     camara:lookAt(self.jugador.posX,self.jugador.posY)
     
 clampCamara(camara, mapa.width * mapa.tilewidth, mapa.height * mapa.tileheight, ventana.ancho, ventana.alto)
-
-    -- for _, e in ipairs(self.enemigos) do
-    --     e:ActualizarEmpuje(dt)
-    --     e:ActualizarAnimacion(dt) -- no hace nada si el enemigo no tiene animación configurada
-
-    --     if e.vivo and enPozo(e.posX, e.posY) then
-    --         e.vivo = false
-    --     end
-    -- end
-
-    
-    -- if enPozo(self.jugador.posX, self.jugador.posY) then
-    --     self.jugador.vivo = false
-    --     MaqEstadoGlobal:cambiar("perder")
-    -- end
-
+  
     for _, e in ipairs(self.enemigos) do
     e:ActualizarEmpuje(dt)
     e:ActualizarAnimacion(dt)
@@ -142,7 +105,9 @@ end
 
 if self.jugador:EnPozo() then
     self.jugador.vivo = false
+    --print("perdiste")
     MaqEstadoGlobal:cambiar("perder")
+    return
 end
 
     -- Condicion de VIctoria
@@ -184,7 +149,7 @@ end
     -- love.graphics.setColor(1, 1, 1) -- resetear color
 
     hud.dibujarVidas(self.jugador.vidas)
-   
+    hud.dibujarControles(ventana)   
     camara:detach()
 
     -- Debug en pantalla de instancias de enemigos
@@ -201,7 +166,7 @@ end
    love.graphics.draw(lienzo,0,0,0,ventana.escala,ventana.escala)
 
     
-    --hud.dibujarControles(ventana)    
+    
 
     hud.dibujarFPS()
 end
@@ -209,7 +174,7 @@ end
 
 function EstadoJugando:inputsJuego(key)
     if key == "r" then
-        self:reiniciar()
+        MaqEstadoGlobal:cambiar("jugando")
         return
     end
 
@@ -237,6 +202,5 @@ end
 function EstadoJugando:salir()
     if sonidoFon then
         sonidoFon:stop()
-        --sonidoFon = nil
     end
 end

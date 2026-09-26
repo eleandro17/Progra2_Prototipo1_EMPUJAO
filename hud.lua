@@ -6,6 +6,7 @@ function hud.cargar()
     hud.imgGameOver = love.graphics.newImage("assets/gameover.png")
     hud.imgVictoria = love.graphics.newImage("assets/victoria.png")
     hud.imgVida = love.graphics.newImage("assets/vida.png")
+    hud.imgControles = love.graphics.newImage("assets/controles.png")
 
     hud.fuentePequena = love.graphics.newFont(22)
     hud.fuentePequena:setFilter("nearest", "nearest")
@@ -25,16 +26,16 @@ end
 
 function hud.dibujarReinicio(ventana)
     love.graphics.setFont(hud.fuentePequena)
-    love.graphics.setColor(0.8, 0.5, 1)
-    love.graphics.printf("(R)einiciar", 0, ventana.alto -1, ventana.ancho, "center")
+    love.graphics.setColor(0.8, 0.5, 0.1)
+    love.graphics.printf("(R)einiciar", 0, ventana.alto *2, ventana.ancho *2, "center")
     love.graphics.setColor(1, 1, 1)
 end
 
 function hud.dibujarControles(ventana)
-    love.graphics.setFont(love.graphics.newFont(18))
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.printf("Flechas: mover | D: dash | R: reiniciar", 0, ventana.alto - 22, ventana.ancho, "center")
-    love.graphics.setColor(1, 1, 1)
+    if love.keyboard.isDown("c") then
+        
+        love.graphics.draw(hud.imgControles, 140, 110)
+    end
 end
 
 function hud.dibujarGameOver(ventana, sonidoFon)

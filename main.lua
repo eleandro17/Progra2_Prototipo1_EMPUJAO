@@ -5,8 +5,6 @@ require "dependencias"
 
 ventana = {     alto = 136, ancho = 240, escala = 3 }
 
-hasGanao = false
-
 MaqEstadoGlobal = MaqEstados{
     ["jugando" ] = function() return EstadoJugando() end,
     ["ganar"] = function() return EstadoGanar() end,

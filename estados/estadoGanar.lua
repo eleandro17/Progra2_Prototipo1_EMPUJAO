@@ -1,9 +1,12 @@
 EstadoGanar = Class{__includes=Estado}
 
 function EstadoGanar:init()
+    sonidoGanar = love.audio.newSource ( "assets/hasganao.ogg", "static")
+    sonidoGanar:setVolume(0.5)
+    sonidoGanar:play()
 end
 
-function EstadoGanar:ingresar(parametros)-- para  agregarle algo en el futuro no tan lejano. Puntaje tal vez?
+function EstadoGanar:ingresar(parametros)-- para  agregarle algo en el futuro no tan lejano
 end
 
 function EstadoGanar:actualizar(dt)
@@ -25,5 +28,11 @@ end
 function EstadoGanar:inputsJuego(key)
     if key == "r" then
         MaqEstadoGlobal:cambiar("jugando")
+    end
+end
+
+function EstadoGanar:salir()
+    if sonidoGanar then
+        sonidoGanar:stop()
     end
 end

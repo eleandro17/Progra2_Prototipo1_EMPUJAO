@@ -79,13 +79,19 @@ ZorzalNpc (ada2.png)	ZorzalNpc	No	No	No
 - Sincroniza hitbox con mundobump tras ConfigurarAnimacion (fix colisión Cactusa)
 - Pantalla de menù y estadoGanar con dibujos nuevos 
 
+- Se cambiò dibujar controles. ahora se dibuja al apretar "C"
+- Se actualizò pantallaMenù tambien
+- Eliminè reiniciar() en funcion de la coherencia de la màquina de estados. Ahora reinicia solo con MaqEstadoGlobal:cambiar("jugando)
+- Agreguè feedback de sonidos a estadoGanar y estadoPerder
+
 ### Pendiente / próximos pasos
 
 
 - Agregar comportamiento propio a ZorzalNpc (diálogos/interacción).
 - Crear un assets Manager 
 - Corregir el hud de corazones/vidas que quedò despegado de la càmara
-- Sacar el mètodo reiniciar() y usar el init() de cada estados directamente
+
+
 
 
 ## Cómo correrlo

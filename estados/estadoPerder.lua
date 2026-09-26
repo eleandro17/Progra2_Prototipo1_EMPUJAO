@@ -1,10 +1,16 @@
 EstadoPerder = Class{__includes=Estado}
 
+
 function EstadoPerder:init()
+     
     texFondo = love.graphics.newImage ("assets/fondo.png")
+    self.sonidoPerder = love.audio.newSource("assets/perdiste.ogg", "stream")
+    self.sonidoPerder:setVolume(0.5)
+    self.sonidoPerder:play()
 end
 
 function EstadoPerder:ingresar(parametros)
+    
 end
 
 function EstadoPerder:actualizar(dt)
@@ -17,8 +23,9 @@ function EstadoPerder:dibujar()
     love.graphics.draw(texFondo, 0, 0, 0, 1, 1, 0, 0)
 
     hud.dibujarGameOver(ventana)
-    
 
+    
+    
     love.graphics.setCanvas()
     love.graphics.draw(lienzo, 0, 0, 0, ventana.escala, ventana.escala)
 
@@ -31,4 +38,12 @@ function EstadoPerder:inputsJuego(key)
     if key == "r" then
         MaqEstadoGlobal:cambiar("jugando")
     end
+end
+
+function EstadoPerder:salir()
+    
+    if self.sonidoPerder then
+        self.sonidoPerder:stop()
+    end
+   
 end
