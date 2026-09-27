@@ -1,5 +1,3 @@
-
-
 Jugador = Class{}
 
 -- =================== INICIALIZACION ===================
@@ -50,7 +48,6 @@ function Jugador:Cargar()
 end
 
 -- =================== REINICIAR ===================
-
 function Jugador:Reiniciar()
     self.posX = self.spawnX
     self.posY = self.spawnY
@@ -67,10 +64,6 @@ function Jugador:Reiniciar()
 
     self.vivo = true
     self.vidas = 3
-
-    if self.mundobump then
-        self.mundobump:update(self, self.hBoxX, self.hBoxY, self.ancho, self.alto)
-    end
 end
 
 -- =================== ACTUALIZACION ===================
@@ -89,6 +82,8 @@ function Jugador:Actualizar(dt, enemigos)
 
     -- Dash en curso
     if self.dasheando then
+        local prevX, prevY = self.posX, self.posY
+
         self.posX = self.posX + self.dirX * self.dashVel * dt
         self.posY = self.posY + self.dirY * self.dashVel * dt
 
@@ -96,6 +91,29 @@ function Jugador:Actualizar(dt, enemigos)
         self.hBoxY = self.posY - self.origY
         if self.mundobump then
             self.mundobump:update(self, self.hBoxX, self.hBoxY, self.ancho, self.alto)
+        end
+
+        --  corto el dash 
+        if self:ChocaPared() then
+            self.posX, self.posY = prevX, prevY
+            self.hBoxX = self.posX - self.origX
+            self.hBoxY = self.posY - self.origY
+            if self.mundobump then
+                self.mundobump:update(self, self.hBoxX, self.hBoxY, self.ancho, self.alto)
+            end
+
+            self.dasheando = false
+            self.dashTiempo = 0
+            self.enCooldown = true
+
+            for _, e in ipairs(enemigos) do
+                if e.esInteractivo and e.seMueve then
+                    e:MoverTurno(self.posX, self.posY)
+                end
+            end
+
+            self:ChequearDanio(enemigos)
+            return
         end
 
         -- chequeo de choque contra cada enemigo interactivo mientras dasheo
@@ -136,7 +154,7 @@ function Jugador:Mover(dx, dy)
     self.dirX = dx
     self.dirY = dy
 
-    local prevX, prevY = self.posX, self.posY -- posición (justo antes) de este movimiento
+    local prevX, prevY = self.posX, self.posY -- posición (anterior) a este movimiento
 
     self.posX = self.posX + dx * self.paso
     self.posY = self.posY + dy * self.paso
@@ -213,6 +231,7 @@ function Jugador:ChocaPared()
     end
     return false
 end
+
 
 
 -- Con queryPoint

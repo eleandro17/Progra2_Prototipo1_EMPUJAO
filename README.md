@@ -4,13 +4,14 @@ Prototipo desarrollado para la materia **Programación de Videojuegos 2** (Tecni
 
 ## Descripción
 
-Juego de exploración/persecución en una grilla (8x8 por casillero), con movimiento por turnos y un sistema de dash. El jugador debe evadir o escaparse de las entidades, su defensa/ataque es un dash-empujòn que los saca afuera del àrea.
+Juego de exploración/persecución en una grilla (8x8 por casillero), con movimiento por turnos y un dash medio tramposo. El jugador debe evadir o escaparse de las entidades, su defensa/ataque es un dash-empujòn que los saca afuera del àrea.
 
 ## Controles
 Tecla	Acción
 Flechas (↑ ↓ ← →)	Mover al jugador (un paso por turno)
 D	Dash (movimiento rápido, invulnerable, empuja enemigos)
 R	Reiniciar la partida (en cualquier momento)
+(C)ontroles
 
 ## Estructura del proyecto
 
@@ -70,22 +71,16 @@ ZorzalNpc (ada2.png)	ZorzalNpc	No	No	No
 
 ## Estado del commit actual
 
-Máquina de estados:
+Movimiento:
+- Tenìa una especie de tunneling en el dash, que hacìa que atravesara paredes ( en realidad me gusta como feature pero tengo que plantearlo mas seriamente)
 
--MaqEstados:cambiar ahora llama a ingresar(parametros) del nuevo estado (antes solo llamaba salir() del anterior y creaba el nuevo; ingresar estaba definido pero nunca se disparaba).
--Reimplementado reiniciar(), esta vez respetando la interfaz de Estado que dio el profe (antes habìa hecho un reinicio propio por fuera del patrón; después se había sacado del todo como para recrear el estado con cambiar("jugando")). Ahora EstadoJugando:reiniciar() resetea jugador y enemigos, sin recrear todo el estado ( estimo que es mas eficiente??)
--Fix en Jugador:Reiniciar y Enemigo:Reiniciar: faltaba sincronizar mundobump:update() tras resetear posición — sin eso, el mundo de colisiones quedaba con la posición vieja tras reiniciar.
-- Tecla "r" en EstadoJugando ahora llama a self:reiniciar() en vez de MaqEstadoGlobal:cambiar("jugando").
-
-Limpieza:
-
-Eliminè código muerto: funciones EnPozo duplicadas/comentadas, comentarios sueltos y bloques de debug comentados en estadoJugando.lua (aunque tal vez despues tenga que haer un fichero de funciones DEBUG)
 
 ### Pendiente / próximos pasos
 
 
 - Agregar comportamiento propio a ZorzalNpc (diálogos/interacción).
 - Crear un assets Manager 
+
 
 
 
