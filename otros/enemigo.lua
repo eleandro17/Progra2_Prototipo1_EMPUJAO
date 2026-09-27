@@ -50,7 +50,7 @@ end
 end
 
 -- =================== REINICIAR ===================
--- Resetea el estado a los valores de spawn, sin recargar la textura ni recrear la instancia (evito generar entidades nuevas en runtime)
+
 function Enemigo:Reiniciar()
     self.posX = self.spawnX
     self.posY = self.spawnY
@@ -63,6 +63,10 @@ function Enemigo:Reiniciar()
 
     self.hBoxX = self.posX - self.origX
     self.hBoxY = self.posY - self.origY
+
+    if self.mundobump then
+        self.mundobump:update(self, self.hBoxX, self.hBoxY, self.ancho, self.alto)
+    end
 
     if self.animCuadros then
         self.animTiempo = 0
@@ -240,16 +244,6 @@ function Enemigo:ChocaPared()
     return false
 end
 
--- function Enemigo:EnPozo()
---     if not self.mundobump then return false end
---     local hBoxes, cant = self.mundobump:queryRect(self.hBoxX, self.hBoxY, self.ancho, self.alto)
---     for i = 1, cant do
---         if hBoxes[i].esPozo then
---             return true
---         end
---     end
---     return false
--- end
 
 -- metodo de Caìda pero con queryPoint
 

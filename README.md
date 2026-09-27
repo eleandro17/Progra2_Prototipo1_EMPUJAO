@@ -69,27 +69,24 @@ Cactusa (cactusa.png, quieto)	Cactusa	No	Sí	Sí
 ZorzalNpc (ada2.png)	ZorzalNpc	No	No	No
 
 ## Estado del commit actual
-- FIx de argumentos desalineados en Cactusa/Enemigo (mundobump=nil)
-- Mundobump se hace opcional en Enemigo (ZorzalNpc no colisiona)
-- Fix en Colision: comparaba contra "cualquier cosa cerca" en vez del objeto puntual, causando colisión/empuje simultáneo con todos los enemigos
-- Agregué detección de pozos vía queryPoint (en reemplazo de enPozo con límites hardcodeados)
-- Muevo la inicialización de mapa/mundobump/cámara de main.lua a EstadoJugando (mundobump limpio en cada partida)
 
-- Cambio la forma de instanciar enemigos. Ahora desde capa "entidades" de Tiled usando obj.x/obj.y
-- Sincroniza hitbox con mundobump tras ConfigurarAnimacion (fix colisión Cactusa)
-- Pantalla de menù y estadoGanar con dibujos nuevos 
+Máquina de estados:
 
-- Se cambiò dibujar controles. ahora se dibuja al apretar "C"
-- Se actualizò pantallaMenù tambien
-- Eliminè reiniciar() en funcion de la coherencia de la màquina de estados. Ahora reinicia solo con MaqEstadoGlobal:cambiar("jugando)
-- Agreguè feedback de sonidos a estadoGanar y estadoPerder
+-MaqEstados:cambiar ahora llama a ingresar(parametros) del nuevo estado (antes solo llamaba salir() del anterior y creaba el nuevo; ingresar estaba definido pero nunca se disparaba).
+-Reimplementado reiniciar(), esta vez respetando la interfaz de Estado que dio el profe (antes habìa hecho un reinicio propio por fuera del patrón; después se había sacado del todo como para recrear el estado con cambiar("jugando")). Ahora EstadoJugando:reiniciar() resetea jugador y enemigos, sin recrear todo el estado ( estimo que es mas eficiente??)
+-Fix en Jugador:Reiniciar y Enemigo:Reiniciar: faltaba sincronizar mundobump:update() tras resetear posición — sin eso, el mundo de colisiones quedaba con la posición vieja tras reiniciar.
+- Tecla "r" en EstadoJugando ahora llama a self:reiniciar() en vez de MaqEstadoGlobal:cambiar("jugando").
+
+Limpieza:
+
+Eliminè código muerto: funciones EnPozo duplicadas/comentadas, comentarios sueltos y bloques de debug comentados en estadoJugando.lua (aunque tal vez despues tenga que haer un fichero de funciones DEBUG)
 
 ### Pendiente / próximos pasos
 
 
 - Agregar comportamiento propio a ZorzalNpc (diálogos/interacción).
 - Crear un assets Manager 
-- Corregir el hud de corazones/vidas que quedò despegado de la càmara
+
 
 
 

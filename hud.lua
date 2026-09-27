@@ -27,7 +27,7 @@ end
 function hud.dibujarReinicio(ventana)
     love.graphics.setFont(hud.fuentePequena)
     love.graphics.setColor(0.8, 0.5, 0.1)
-    love.graphics.printf("(R)einiciar", 0, ventana.alto *2, ventana.ancho *2, "center")
+    love.graphics.printf("(R)einiciar", 0, ventana.alto *2, ventana.ancho * 2, "center")
     love.graphics.setColor(1, 1, 1)
 end
 

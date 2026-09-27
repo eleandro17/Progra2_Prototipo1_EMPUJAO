@@ -14,11 +14,13 @@ function MaqEstados:init(estados)
 end
 
 
-function MaqEstados:cambiar(nEstado)
+
+function MaqEstados:cambiar(nEstado, parametros)
    
     assert(self.estados[nEstado])
     self.actual:salir()
     
     self.actual = self.estados[nEstado]()
+    self.actual:ingresar(parametros)
     
 end

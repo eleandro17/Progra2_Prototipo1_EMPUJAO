@@ -148,7 +148,7 @@ end
 
     -- love.graphics.setColor(1, 1, 1) -- resetear color
 
-    hud.dibujarVidas(self.jugador.vidas)
+    
     hud.dibujarControles(ventana)   
     camara:detach()
 
@@ -162,6 +162,8 @@ end
 --     love.graphics.print(linea, 10, 30 + (i-1) * 12)
 -- end
 
+    hud.dibujarVidas(self.jugador.vidas)
+
    love.graphics.setCanvas()
    love.graphics.draw(lienzo,0,0,0,ventana.escala,ventana.escala)
 
@@ -174,7 +176,7 @@ end
 
 function EstadoJugando:inputsJuego(key)
     if key == "r" then
-        MaqEstadoGlobal:cambiar("jugando")
+        self:reiniciar()
         return
     end
 
@@ -202,5 +204,12 @@ end
 function EstadoJugando:salir()
     if sonidoFon then
         sonidoFon:stop()
+    end
+end
+
+function EstadoJugando:reiniciar()
+    self.jugador:Reiniciar()
+    for _, e in ipairs(self.enemigos) do
+        e:Reiniciar()
     end
 end

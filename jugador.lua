@@ -50,6 +50,7 @@ function Jugador:Cargar()
 end
 
 -- =================== REINICIAR ===================
+
 function Jugador:Reiniciar()
     self.posX = self.spawnX
     self.posY = self.spawnY
@@ -66,6 +67,10 @@ function Jugador:Reiniciar()
 
     self.vivo = true
     self.vidas = 3
+
+    if self.mundobump then
+        self.mundobump:update(self, self.hBoxX, self.hBoxY, self.ancho, self.alto)
+    end
 end
 
 -- =================== ACTUALIZACION ===================
@@ -131,7 +136,7 @@ function Jugador:Mover(dx, dy)
     self.dirX = dx
     self.dirY = dy
 
-    local prevX, prevY = self.posX, self.posY -- posición justo antes de este movimiento
+    local prevX, prevY = self.posX, self.posY -- posición (justo antes) de este movimiento
 
     self.posX = self.posX + dx * self.paso
     self.posY = self.posY + dy * self.paso
@@ -209,15 +214,6 @@ function Jugador:ChocaPared()
     return false
 end
 
--- function Jugador:EnPozo()
---     local hBoxes, cant = self.mundobump:queryRect(self.hBoxX, self.hBoxY, self.ancho, self.alto)
---     for i = 1, cant do
---         if hBoxes[i].esPozo then
---             return true
---         end
---     end
---     return false
--- end
 
 -- Con queryPoint
 function Jugador:EnPozo()
